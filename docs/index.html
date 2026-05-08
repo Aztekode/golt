@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth motion-reduce:scroll-auto">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#0b1020" />
+
+  <title>Golt Runtime Documentation</title>
+  <meta name="description"
+    content="Documentation for Golt Runtime: a Go-based TypeScript/JavaScript backend runtime with a small native API surface." />
+  <meta name="robots" content="index,follow" />
+
+  <meta property="og:title" content="Golt Runtime Documentation" />
+  <meta property="og:description"
+    content="CLI reference, runtime API, examples, and GitHub Pages-ready documentation for Golt Runtime." />
+  <meta property="og:type" content="website" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="min-h-dvh text-slate-100 antialiased"
+  style="background: radial-gradient(1200px 800px at 20% -10%, rgba(167, 139, 250, .22), transparent 55%), radial-gradient(1100px 720px at 90% 10%, rgba(125, 211, 252, .18), transparent 45%), linear-gradient(180deg, #070a12, #0b1020 38%, #070a12);">
+  <a class="absolute left-[-999px] top-auto h-px w-px overflow-hidden rounded-xl border border-white/15 bg-[#0f1730] px-3 py-2 text-sm text-white focus:left-4 focus:top-4 focus:h-auto focus:w-auto focus:z-[9999]"
+    href="#content">Skip to content</a>
+
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-[#0b1020]/70 backdrop-blur">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+      <div class="flex min-w-0 items-center gap-2.5" aria-label="Golt Runtime">
+        <div class="h-9 w-9 flex-none rounded-xl border border-white/15 shadow-[0_18px_60px_rgba(0,0,0,.55)]"
+          aria-hidden="true"
+          style="background: radial-gradient(16px 16px at 28% 32%, rgba(255, 255, 255, .25), transparent 70%), linear-gradient(135deg, rgba(125, 211, 252, .92), rgba(167, 139, 250, .84)); box-shadow: 0 10px 34px rgba(125, 211, 252, .15), 0 16px 40px rgba(167, 139, 250, .10);">
+        </div>
+        <div class="min-w-0">
+          <div class="truncate text-sm font-semibold leading-tight tracking-tight">Golt Runtime</div>
+          <div class="truncate text-xs text-slate-300/80">TypeScript/JavaScript backend engine (Go)</div>
+        </div>
+      </div>
+      <div class="flex flex-none items-center gap-2.5">
+        <button
+          class="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-3 py-2 text-sm text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none lg:hidden"
+          id="navToggle" type="button" aria-controls="sidebar" aria-expanded="false">
+          Menu
+        </button>
+        <a class="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-3 py-2 text-sm text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none"
+          href="https://github.com/atrox39/golt" rel="noreferrer">GitHub</a>
+        <a class="inline-flex items-center justify-center gap-2 rounded-full border border-sky-300/40 bg-gradient-to-b from-sky-300/15 to-white/5 px-3 py-2 text-sm text-white transition hover:-translate-y-0.5 hover:from-sky-300/20 hover:to-white/10 active:translate-y-0 motion-reduce:transition-none"
+          href="https://github.com/atrox39/golt#readme" rel="noreferrer">
+          <span class="h-2 w-2 rounded-full bg-sky-300 shadow-[0_0_0_4px_rgba(125,211,252,.10)]"
+            aria-hidden="true"></span>
+          <span>README</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-5 pb-14 lg:grid-cols-[320px_1fr]">
+    <aside
+      class="overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_18px_60px_rgba(0,0,0,.55)] lg:sticky lg:top-20"
+      id="sidebar" data-collapsed="false">
+      <div class="border-b border-white/10 bg-gradient-to-b from-white/10 to-transparent px-4 py-4" id="sideHead">
+        <div class="text-xs tracking-wide text-slate-300/80">Documentation</div>
+        <div class="mt-1 text-sm font-semibold">Navigate</div>
+      </div>
+      <nav class="flex flex-col gap-1 px-3 py-3.5" id="docNav" aria-label="Documentation navigation">
+        <a class="nav-link flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2.5 text-sm text-slate-200/90 transition hover:bg-white/5 hover:text-white motion-reduce:transition-none"
+          href="#overview"><span>Overview</span><small class="text-xs text-slate-400">What it is</small></a>
+        <a class="nav-link flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2.5 text-sm text-slate-200/90 transition hover:bg-white/5 hover:text-white motion-reduce:transition-none"
+          href="#install"><span>Installation</span><small class="text-xs text-slate-400">Get started</small></a>
+        <a class="nav-link flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2.5 text-sm text-slate-200/90 transition hover:bg-white/5 hover:text-white motion-reduce:transition-none"
+          href="#quickstart"><span>Quick Start</span><small class="text-xs text-slate-400">First run</small></a>
+        <a class="nav-link flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2.5 text-sm text-slate-200/90 transition hover:bg-white/5 hover:text-white motion-reduce:transition-none"
+          href="#cli"><span>CLI</span><small class="text-xs text-slate-400">Commands</small></a>
+        <a class="nav-link flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2.5 text-sm text-slate-200/90 transition hover:bg-white/5 hover:text-white motion-reduce:transition-none"
+          href="#runtime"><span>Runtime API</span><small class="text-xs text-slate-400">Globals</small></a>
+        <a class="nav-link flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2.5 text-sm text-slate-200/90 transition hover:bg-white/5 hover:text-white motion-reduce:transition-none"
+          href="#examples"><span>Examples</span><small class="text-xs text-slate-400">Practical</small></a>
+        <a class="nav-link flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2.5 text-sm text-slate-200/90 transition hover:bg-white/5 hover:text-white motion-reduce:transition-none"
+          href="#limitations"><span>Limitations</span><small class="text-xs text-slate-400">Scope</small></a>
+        <a class="nav-link flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2.5 text-sm text-slate-200/90 transition hover:bg-white/5 hover:text-white motion-reduce:transition-none"
+          href="#pages"><span>GitHub Pages</span><small class="text-xs text-slate-400">Deploy</small></a>
+        <a class="nav-link flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-2.5 text-sm text-slate-200/90 transition hover:bg-white/5 hover:text-white motion-reduce:transition-none"
+          href="#license"><span>License</span><small class="text-xs text-slate-400">Status</small></a>
+      </nav>
+    </aside>
+
+    <main class="min-w-0" id="content">
+      <div
+        class="overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_18px_60px_rgba(0,0,0,.55)]"
+        style="background: radial-gradient(1100px 420px at 25% 10%, rgba(125, 211, 252, .14), transparent 60%), radial-gradient(1100px 420px at 75% 10%, rgba(167, 139, 250, .14), transparent 60%), linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .02));">
+        <div class="flex flex-wrap items-center gap-2 text-sm text-slate-300/85">
+          <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/15 px-3 py-1.5">
+            <span class="h-2.5 w-2.5 rounded bg-gradient-to-br from-sky-300 to-violet-400 ring-1 ring-white/20"
+              aria-hidden="true"></span>
+            <span>Static docs, GitHub Pages-friendly</span>
+          </span>
+          <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/15 px-3 py-1.5">
+            <span>CLI:</span>
+            <span class="font-mono text-[12.5px] text-slate-200/90">golt init</span>
+            <span class="text-slate-400">·</span>
+            <span class="font-mono text-[12.5px] text-slate-200/90">golt run</span>
+          </span>
+          <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/15 px-3 py-1.5">
+            <span>Globals:</span>
+            <span class="font-mono text-[12.5px] text-slate-200/90">console</span>
+            <span class="text-slate-400">·</span>
+            <span class="font-mono text-[12.5px] text-slate-200/90">Golt.env</span>
+          </span>
+        </div>
+        <h1 class="mt-3 text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+          Golt Runtime Documentation
+        </h1>
+        <p class="mt-3 max-w-[78ch] text-pretty text-[15px] leading-relaxed text-slate-200/85">
+          Golt bundles TypeScript/JavaScript (via esbuild) and executes it in a Go-based JS engine with a small,
+          explicit native API surface.
+        </p>
+      </div>
+
+      <section id="overview">
+        <div
+          class="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_12px_50px_rgba(0,0,0,.35)]">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold tracking-tight">Overview</h2>
+            <p class="mt-2 text-sm text-slate-200/75">
+              Golt provides a simple backend scripting workflow: write TypeScript, run it with a single CLI command,
+              and use a small set of runtime globals.
+            </p>
+
+            <div class="mt-4 grid gap-4 sm:grid-cols-2">
+              <div class="min-w-0 rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/3 p-4">
+                <strong class="block text-sm font-semibold text-white">What Golt is</strong>
+                <p class="mt-1 text-sm text-slate-200/75">A Go CLI + runtime engine that compiles a TS entrypoint into a
+                  single bundle and runs it.</p>
+              </div>
+              <div class="min-w-0 rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/3 p-4">
+                <strong class="block text-sm font-semibold text-white">What Golt is not</strong>
+                <p class="mt-1 text-sm text-slate-200/75">Full Node.js compatibility. Only the globals explicitly
+                  provided by the runtime are available.</p>
+              </div>
+            </div>
+
+            <div
+              class="mt-4 rounded-2xl border border-white/15 bg-gradient-to-b from-amber-300/10 to-white/5 p-4 text-sm text-slate-200/80">
+              <strong class="font-semibold text-white">Tip:</strong> Keep your Golt programs small and explicit—treat
+              the runtime surface like an SDK, not a full OS.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="install">
+        <div
+          class="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_12px_50px_rgba(0,0,0,.35)]">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold tracking-tight">Installation</h2>
+            <p class="mt-2 text-sm text-slate-200/75">Install from source (recommended for local development) or via
+              <code class="font-mono text-[12.5px] text-slate-100/95">go install</code>.
+            </p>
+
+            <h3 class="mt-5 text-sm font-semibold text-white">From source</h3>
+            <div class="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+              <div class="flex items-center justify-between gap-3 px-3 pt-3 text-xs text-slate-300/80">
+                <span>Windows (PowerShell / cmd)</span>
+                <button
+                  class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none"
+                  type="button" data-copy="#code-build">Copy</button>
+              </div>
+              <pre
+                class="mt-2 overflow-auto px-3 pb-3"><code class="block font-mono text-[12.5px] leading-relaxed text-slate-100/95" id="code-build">go build -o golt.exe .\cmd\golt</code></pre>
+            </div>
+
+            <h3 class="mt-5 text-sm font-semibold text-white">Go install</h3>
+            <div class="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+              <div class="flex items-center justify-between gap-3 px-3 pt-3 text-xs text-slate-300/80">
+                <span>From GitHub module path</span>
+                <button
+                  class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none"
+                  type="button" data-copy="#code-install">Copy</button>
+              </div>
+              <pre
+                class="mt-2 overflow-auto px-3 pb-3"><code class="block font-mono text-[12.5px] leading-relaxed text-slate-100/95" id="code-install">go install github.com/atrox39/golt/cmd/golt@latest</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="quickstart">
+        <div
+          class="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_12px_50px_rgba(0,0,0,.35)]">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold tracking-tight">Quick Start</h2>
+
+            <h3 class="mt-5 text-sm font-semibold text-white">1) Initialize a project</h3>
+            <div class="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+              <div class="flex items-center justify-between gap-3 px-3 pt-3 text-xs text-slate-300/80">
+                <span>Creates tsconfig + typings + app.ts</span>
+                <button
+                  class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none"
+                  type="button" data-copy="#code-init">Copy</button>
+              </div>
+              <pre
+                class="mt-2 overflow-auto px-3 pb-3"><code class="block font-mono text-[12.5px] leading-relaxed text-slate-100/95" id="code-init">golt init</code></pre>
+            </div>
+
+            <h3 class="mt-5 text-sm font-semibold text-white">2) Run your entry file</h3>
+            <div class="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+              <div class="flex items-center justify-between gap-3 px-3 pt-3 text-xs text-slate-300/80">
+                <span>Windows example</span>
+                <button
+                  class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none"
+                  type="button" data-copy="#code-run">Copy</button>
+              </div>
+              <pre
+                class="mt-2 overflow-auto px-3 pb-3"><code class="block font-mono text-[12.5px] leading-relaxed text-slate-100/95" id="code-run">golt run .\app.ts</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="cli">
+        <div
+          class="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_12px_50px_rgba(0,0,0,.35)]">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold tracking-tight">CLI</h2>
+
+            <h3 class="mt-5 text-sm font-semibold text-white"><code
+                class="font-mono text-[12.5px] text-slate-100/95">golt init</code></h3>
+            <p class="mt-2 text-sm text-slate-200/75">Creates three files in the current directory:</p>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2">
+              <div class="min-w-0 rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/3 p-4">
+                <strong class="block text-sm font-semibold text-white">golt.d.ts</strong>
+                <p class="mt-1 text-sm text-slate-200/75">TypeScript global type definitions for the
+                  <code class="font-mono text-[12.5px] text-slate-100/95">Golt</code> namespace.
+                </p>
+              </div>
+              <div class="min-w-0 rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/3 p-4">
+                <strong class="block text-sm font-semibold text-white">tsconfig.json</strong>
+                <p class="mt-1 text-sm text-slate-200/75">Baseline TS config: ESNext target/module, strict mode,
+                  includes <code class="font-mono text-[12.5px] text-slate-100/95">golt.d.ts</code>.</p>
+              </div>
+            </div>
+            <div class="mt-4 min-w-0 rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/3 p-4">
+              <strong class="block text-sm font-semibold text-white">app.ts</strong>
+              <p class="mt-1 text-sm text-slate-200/75">Example entrypoint (prints a greeting).</p>
+            </div>
+
+            <div class="my-5 h-px w-full bg-white/10"></div>
+
+            <h3 class="text-sm font-semibold text-white"><code
+                class="font-mono text-[12.5px] text-slate-100/95">golt run &lt;filename.ts&gt;</code></h3>
+            <p class="mt-2 text-sm text-slate-200/75">
+              Bundles the specified entry file and executes it in the Golt runtime.
+              Compilation errors and runtime exceptions are printed to stdout/stderr.
+            </p>
+
+            <div
+              class="mt-4 rounded-2xl border border-white/15 bg-gradient-to-b from-amber-300/10 to-white/5 p-4 text-sm text-slate-200/80">
+              <strong class="font-semibold text-white">Note:</strong> The current CLI expects a filename argument.
+              Running <code class="font-mono text-[12.5px] text-slate-100/95">golt run</code> without a filename may
+              crash.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="runtime">
+        <div
+          class="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_12px_50px_rgba(0,0,0,.35)]">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold tracking-tight">Runtime API</h2>
+            <p class="mt-2 text-sm text-slate-200/75">The runtime surface is intentionally small. Today, these globals
+              are provided by native modules.</p>
+
+            <h3 class="mt-5 text-sm font-semibold text-white"><code
+                class="font-mono text-[12.5px] text-slate-100/95">console.log(...args)</code></h3>
+            <p class="mt-2 text-sm text-slate-200/75">Prints exported JS values to stdout.</p>
+
+            <div class="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+              <div class="flex items-center justify-between gap-3 px-3 pt-3 text-xs text-slate-300/80">
+                <span>TypeScript</span>
+                <button
+                  class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none"
+                  type="button" data-copy="#code-console">Copy</button>
+              </div>
+              <pre class="mt-2 overflow-auto px-3 pb-3"><code class="block font-mono text-[12.5px] leading-relaxed text-slate-100/95" id="code-console">console.log("Hello from Golt");
+console.log({ ok: true, t: Date.now() });</code></pre>
+            </div>
+
+            <h3 class="mt-5 text-sm font-semibold text-white"><code
+                class="font-mono text-[12.5px] text-slate-100/95">Golt.env</code></h3>
+            <p class="mt-2 text-sm text-slate-200/75">A map of environment variables from the host process. Keys and
+              values are strings.</p>
+
+            <div class="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+              <div class="flex items-center justify-between gap-3 px-3 pt-3 text-xs text-slate-300/80">
+                <span>TypeScript</span>
+                <button
+                  class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none"
+                  type="button" data-copy="#code-env">Copy</button>
+              </div>
+              <pre class="mt-2 overflow-auto px-3 pb-3"><code class="block font-mono text-[12.5px] leading-relaxed text-slate-100/95" id="code-env">console.log("PATH =", Golt.env["PATH"]);
+console.log("HOME =", Golt.env["HOME"]);
+console.log("CUSTOM =", Golt.env["CUSTOM"]);</code></pre>
+            </div>
+
+            <h3 class="mt-5 text-sm font-semibold text-white">Type definitions</h3>
+            <p class="mt-2 text-sm text-slate-200/75">Generated by <code
+                class="font-mono text-[12.5px] text-slate-100/95">golt init</code>:</p>
+
+            <div class="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+              <div class="flex items-center justify-between gap-3 px-3 pt-3 text-xs text-slate-300/80">
+                <span>golt.d.ts</span>
+                <button
+                  class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none"
+                  type="button" data-copy="#code-dts">Copy</button>
+              </div>
+              <pre class="mt-2 overflow-auto px-3 pb-3"><code class="block font-mono text-[12.5px] leading-relaxed text-slate-100/95" id="code-dts">/***
+* Golt Runtime - TS/JS Backend Engine Global Definitions
+*/
+declare namespace Golt {
+  export const env: Record&lt;string, string | undefined&gt;;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="examples">
+        <div
+          class="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_12px_50px_rgba(0,0,0,.35)]">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold tracking-tight">Examples</h2>
+
+            <h3 class="mt-5 text-sm font-semibold text-white">Minimal script</h3>
+            <div class="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+              <div class="flex items-center justify-between gap-3 px-3 pt-3 text-xs text-slate-300/80">
+                <span>app.ts</span>
+                <button
+                  class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none"
+                  type="button" data-copy="#code-example1">Copy</button>
+              </div>
+              <pre class="mt-2 overflow-auto px-3 pb-3"><code class="block font-mono text-[12.5px] leading-relaxed text-slate-100/95" id="code-example1">console.log("Hello, Golt!");
+console.log("USER =", Golt.env["USERNAME"] ?? Golt.env["USER"]);</code></pre>
+            </div>
+
+            <h3 class="mt-5 text-sm font-semibold text-white">Debugging style output</h3>
+            <div class="mt-2 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+              <div class="flex items-center justify-between gap-3 px-3 pt-3 text-xs text-slate-300/80">
+                <span>Structured log</span>
+                <button
+                  class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none"
+                  type="button" data-copy="#code-example2">Copy</button>
+              </div>
+              <pre class="mt-2 overflow-auto px-3 pb-3"><code class="block font-mono text-[12.5px] leading-relaxed text-slate-100/95" id="code-example2">const event = {
+  name: "startup",
+  ts: new Date().toISOString(),
+  pid: Golt.env["PID"] ?? "unknown"
+};
+console.log(event);</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="limitations">
+        <div
+          class="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_12px_50px_rgba(0,0,0,.35)]">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold tracking-tight">Limitations & Expectations</h2>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2">
+              <div class="min-w-0 rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/3 p-4">
+                <strong class="block text-sm font-semibold text-white">Not full Node.js</strong>
+                <p class="mt-1 text-sm text-slate-200/75">Only the provided runtime globals exist. Treat this as a
+                  curated JS runtime, not Node compatibility.</p>
+              </div>
+              <div class="min-w-0 rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/3 p-4">
+                <strong class="block text-sm font-semibold text-white">Bundled entrypoint</strong>
+                <p class="mt-1 text-sm text-slate-200/75">Execution is based on an esbuild bundle of your entry file,
+                  designed for a single-file runtime experience.</p>
+              </div>
+            </div>
+
+            <div
+              class="mt-4 rounded-2xl border border-white/15 bg-gradient-to-b from-amber-300/10 to-white/5 p-4 text-sm text-slate-200/80">
+              <strong class="font-semibold text-white">Practical guidance:</strong> Start by writing scripts that rely
+              on <code class="font-mono text-[12.5px] text-slate-100/95">console</code> and <code
+                class="font-mono text-[12.5px] text-slate-100/95">Golt.env</code> only. Add native modules as the
+              runtime grows.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pages">
+        <div
+          class="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_12px_50px_rgba(0,0,0,.35)]">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold tracking-tight">GitHub Pages Deployment</h2>
+            <p class="mt-2 text-sm text-slate-200/75">
+              This documentation is a single static HTML file designed to work on GitHub Pages without build tooling.
+            </p>
+
+            <div class="mt-4 rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-white/3 p-4">
+              <strong class="block text-sm font-semibold text-white">Recommended setup</strong>
+              <p class="mt-1 text-sm text-slate-200/75">
+                In your repository settings: enable GitHub Pages and set the source to the <code>docs/</code> folder on
+                your default branch.
+              </p>
+            </div>
+
+            <div class="my-5 h-px w-full bg-white/10"></div>
+
+            <p class="text-sm text-slate-200/75">
+              Link back to the project README:
+              <a class="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
+                href="https://github.com/atrox39/golt#readme" rel="noreferrer">github.com/atrox39/golt#readme</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="license">
+        <div
+          class="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_12px_50px_rgba(0,0,0,.35)]">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold tracking-tight">License</h2>
+            <p class="mt-2 text-sm text-slate-200/75">
+              No LICENSE file is currently present in the repository. If you intend open-source use, add a license file
+              and update the README + this page.
+            </p>
+            <div
+              class="mt-4 rounded-2xl border border-white/15 bg-gradient-to-b from-amber-300/10 to-white/5 p-4 text-sm text-slate-200/80">
+              <strong class="font-semibold text-white">Common choices:</strong> MIT (simple), Apache-2.0 (patent grant),
+              GPL-3.0 (copyleft).
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="mt-6 px-0.5 pb-2 text-sm text-slate-300/70">
+        <div class="my-5 h-px w-full bg-white/10"></div>
+        <div>Built as a static page for GitHub Pages. No build step required.</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var sidebar = document.getElementById("sidebar");
+      var sideHead = document.getElementById("sideHead");
+      var docNav = document.getElementById("docNav");
+      var navToggle = document.getElementById("navToggle");
+
+      var mq = window.matchMedia("(max-width: 980px)");
+
+      function setCollapsed(collapsed) {
+        sidebar.setAttribute("data-collapsed", collapsed ? "true" : "false");
+        navToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+        applyCollapsed();
+      }
+
+      function applyCollapsed() {
+        if (!sideHead || !docNav) return;
+        var collapsed = sidebar.getAttribute("data-collapsed") === "true";
+        if (mq.matches) {
+          sideHead.classList.toggle("hidden", collapsed);
+          docNav.classList.toggle("hidden", collapsed);
+        } else {
+          sideHead.classList.remove("hidden");
+          docNav.classList.remove("hidden");
+        }
+      }
+
+      if (navToggle) {
+        navToggle.addEventListener("click", function () {
+          var collapsed = sidebar.getAttribute("data-collapsed") === "true";
+          setCollapsed(!collapsed);
+        });
+      }
+
+      mq.addEventListener("change", applyCollapsed);
+      applyCollapsed();
+
+      var navLinks = Array.prototype.slice.call(document.querySelectorAll(".nav-link"));
+      var sections = navLinks
+        .map(function (a) { return document.querySelector(a.getAttribute("href")); })
+        .filter(Boolean);
+
+      var active = null;
+      function updateActive() {
+        var y = window.scrollY || window.pageYOffset;
+        var best = null;
+        var bestTop = -Infinity;
+
+        for (var i = 0; i < sections.length; i++) {
+          var s = sections[i];
+          var rect = s.getBoundingClientRect();
+          var top = rect.top + y;
+          if (top <= y + 120 && top > bestTop) {
+            bestTop = top;
+            best = s;
+          }
+        }
+
+        if (best && best.id !== active) {
+          active = best.id;
+          navLinks.forEach(function (a) {
+            var isActive = a.getAttribute("href") === "#" + active;
+            if (isActive) {
+              a.setAttribute("aria-current", "page");
+              a.classList.add("bg-white/5", "border", "border-sky-300/25", "text-white");
+            } else {
+              a.removeAttribute("aria-current");
+              a.classList.remove("bg-white/5", "border", "border-sky-300/25", "text-white");
+            }
+          });
+        }
+      }
+
+      window.addEventListener("scroll", updateActive, { passive: true });
+      window.addEventListener("resize", updateActive);
+      updateActive();
+
+      var copyButtons = Array.prototype.slice.call(document.querySelectorAll("button.copy"));
+      copyButtons.forEach(function (btn) {
+        btn.addEventListener("click", async function () {
+          var sel = btn.getAttribute("data-copy");
+          if (!sel) return;
+          var el = document.querySelector(sel);
+          if (!el) return;
+
+          var text = el.innerText;
+          try {
+            await navigator.clipboard.writeText(text);
+            var prev = btn.innerText;
+            btn.innerText = "Copied";
+            setTimeout(function () { btn.innerText = prev; }, 900);
+          } catch (e) {
+            var prev2 = btn.innerText;
+            btn.innerText = "Copy failed";
+            setTimeout(function () { btn.innerText = prev2; }, 900);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+
+</html>
