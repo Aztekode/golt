@@ -1,8 +1,13 @@
 package runtime
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/dop251/goja"
 )
@@ -43,26 +48,50 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 
 		e.Wg.Add(1)
 
-		go func() {
-			http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-				done := make(chan struct{})
+		srv := &http.Server{
+			Addr: fmt.Sprintf(":%d", port),
+		}
 
-				e.loop.RunOnLoop(func(vm *goja.Runtime) {
-					ctx := &HttpContext{w: w, r: r}
-					_, err := handler(goja.Undefined(), vm.ToValue(ctx))
-					if err != nil {
-						fmt.Println("Error HTTP: ", err)
-						http.Error(w, "Internal server error", http.StatusInternalServerError)
-					}
-					close(done)
-				})
-				<-done
+		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			done := make(chan struct{})
+
+			e.loop.RunOnLoop(func(vm *goja.Runtime) {
+				ctx := &HttpContext{w: w, r: r}
+				_, err := handler(goja.Undefined(), vm.ToValue(ctx))
+				if err != nil {
+					fmt.Println("Error HTTP: ", err)
+					http.Error(w, "Internal server error", http.StatusInternalServerError)
+				}
+				close(done)
 			})
+			<-done
+		})
 
+		go func() {
 			fmt.Printf("Server is running on port %d\n", port)
-			if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
-				fmt.Println("Error HTTP: ", err)
+			if err := srv.ListenAndServe(); err != nil {
+				fmt.Println("Critical error on server: ", err)
 			}
+		}()
+
+		go func() {
+			quit := make(chan os.Signal, 1)
+			signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+			<-quit
+
+			fmt.Println("Server is shutting down...")
+
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+
+			if err := srv.Shutdown(ctx); err != nil {
+				fmt.Println("Error on server shutdown: ", err)
+			}
+
+			fmt.Println("Server is down")
+
+			e.loop.Stop()
+			e.Wg.Done()
 		}()
 
 		return goja.Undefined()
