@@ -49,7 +49,16 @@ func initProject() {
 * Golt Runtime - TS/JS Backend Engine Global Definitions
 */
 declare namespace Golt {
-	export const env: Record<string, string | undefined>;
+  export const env: Record<string, string | undefined>;
+
+  export interface Context {
+    Method(): string;
+    Url(): string;
+    Status(code: number): Context;
+    Send(body: string): void;
+  }
+
+  export function serve(port: number, handler: (c: Context) => void): void;
 }
 `
 	os.WriteFile("golt.d.ts", []byte(dtsContents), 0644)
