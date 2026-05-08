@@ -1,0 +1,9 @@
+*.ts
+*.d.ts
+*.json
+*.log
+*.exe
+golt.exe
+golt
+!golt/
+.env
