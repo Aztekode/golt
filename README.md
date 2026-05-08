@@ -3,7 +3,7 @@
 Golt is a lightweight TypeScript/JavaScript backend runtime written in Go. It bundles and compiles a TypeScript entry file (via esbuild) and executes it in a Go-based JS engine with a small set of built-in globals.
 
 - CLI: `golt init`, `golt run <file.ts>`
-- Runtime globals (today): `console.log`, `Golt.env`, `Golt.serve`
+- Runtime globals (today): `console.log`, `Golt.env`, `Golt.App`, `Golt.logger`
 
 ## Project Overview
 
@@ -83,23 +83,39 @@ console.log("PATH =", Golt.env["PATH"]);
 console.log("NODE_ENV =", Golt.env["NODE_ENV"]);
 ```
 
-### HTTP server (single-handler)
-Golt exposes an HTTP server via `Golt.serve(port, handler)`. All requests are routed to the same handler (internally it registers a single `http.HandleFunc("/", ...)`), so you implement routing patterns inside your TypeScript code by branching on `ctx.Url()` and `ctx.Method()`.
+### HTTP server (App + routing + middleware)
+Golt exposes an HTTP server through `Golt.App()`, which provides:
+- Routing: `app.get/post/put/delete(path, handler)`
+- Middleware: `app.use(middleware)`
+- Not found handler: `app.notFound(handler)`
+- Server start: `app.serve(port)`
+
+Route patterns use Go’s `net/http` `ServeMux` patterns (Go 1.22+), including path parameters like `/users/{id}`. Access params via `ctx.Param("id")`.
 
 ```ts
-Golt.serve(3000, (ctx) => {
-  if (ctx.Url() === "/" && ctx.Method() === "GET") {
-    ctx.Send("Hello from Golt HTTP");
-    return;
-  }
+const app = Golt.App();
 
-  if (ctx.Url() === "/health") {
-    ctx.Status(200).Send("ok");
-    return;
-  }
+app.use(Golt.logger({ format: "dev" }));
 
+app.get("/", (ctx) => {
+  ctx.Send("Hello from Golt HTTP");
+});
+
+app.get("/users/{id}", (ctx) => {
+  ctx.Json({ id: ctx.Param("id") });
+});
+
+app.post("/users", (ctx) => {
+  const body = ctx.ValidateBody({ name: "string" });
+  if (!body) return;
+  ctx.Status(201).Json({ ok: true, name: body.name });
+});
+
+app.notFound((ctx) => {
   ctx.Status(404).Send("not found");
 });
+
+app.serve(3000);
 ```
 
 ## CLI Reference
@@ -114,7 +130,7 @@ Creates a minimal TypeScript project scaffold for running with Golt:
 Bundles the entry file and runs it in the Golt runtime.
 
 Notes:
-- The runtime currently provides `console.log`, `Golt.env`, and `Golt.serve`.
+- The runtime currently provides `console.log`, `Golt.env`, `Golt.App`, and `Golt.logger`.
 - `golt run` expects a filename argument. Running `golt run` with no filename may crash due to missing argument handling.
 
 ## Runtime API (Current)
@@ -125,22 +141,37 @@ Prints values to stdout.
 ### `Golt.env: Record<string, string | undefined>`
 A map of environment variables read from the host process.
 
-### `Golt.serve(port: number, handler: (ctx: HttpContext) => void): void`
-Starts an HTTP server on `:<port>` and dispatches every request to `handler`.
+### `Golt.App(): AppInstance`
+Creates an HTTP application instance with its own `ServeMux`.
 
 Behavior notes (current implementation):
-- Registers a single handler at `/` using Go’s default HTTP mux (`net/http`), which matches all paths.
-- Uses the process-global default mux, so calling `Golt.serve` multiple times shares the same handler/mux (avoid multiple calls for now).
-- No built-in router or middleware pipeline. Implement “middleware” patterns inside your handler function.
-- If the handler throws/returns an error, Golt prints `Error HTTP:` and responds with HTTP 500.
+- Uses a per-app `http.NewServeMux()` and registers method-aware routes using patterns like `"GET /users/{id}"`.
+- Internally, routes and middleware are executed on the Golt event loop (`RunOnLoop`) to keep JS execution serialized.
+- Middleware runs before the route handler (a simple `next()` chain). Handler errors log `Error HTTP:` and respond with HTTP 500.
+- `app.serve(port)` starts the server and installs SIGINT/SIGTERM shutdown handling (graceful shutdown with a 5s timeout).
 
-#### `HttpContext`
-The handler receives a context object with the following methods:
+#### `AppInstance`
+- `app.use(middleware)` — registers middleware. Middleware signature is `(ctx, next) => void`.
+- `app.get/post/put/delete(path, handler)` — registers a handler for a method + path pattern.
+- `app.notFound(handler)` — registers a fallback handler for unmatched routes (status is pre-set to 404).
+- `app.serve(port)` — starts the HTTP server on `:<port>`.
+
+### `Golt.logger(config?): Middleware`
+Creates an HTTP logging middleware compatible with `app.use(...)`.
+
+Config:
+- `format: "dev" | "tiny"` (default `"dev"`)
+
+#### `Context` (HTTP)
+Handlers and middleware receive a context object with the following methods:
 
 - `ctx.Method(): string` — returns the request method.
 - `ctx.Url(): string` — returns the request path (`r.URL.Path`).
-- `ctx.Status(code: number): HttpContext` — sets a status code (chainable).
+- `ctx.Param(name: string): string` — returns a path parameter (`r.PathValue(name)`), when using patterns like `/users/{id}`.
+- `ctx.Status(code: number): Context` — sets a status code (chainable).
 - `ctx.Send(body: string): void` — writes the status (defaults to 200) and response body.
+- `ctx.Json(data: any): void` — sets `Content-Type: application/json` and writes JSON.
+- `ctx.ValidateBody(schema): object | null` — validates JSON request body against a simple schema (returns `null` and responds 400 on invalid input).
 
 Typing is generated by `golt init` in `golt.d.ts`:
 ```ts
@@ -148,21 +179,7 @@ declare namespace Golt {
   export const env: Record<string, string | undefined>;
 }
 ```
-
-Note: the current `golt init` template only includes `Golt.env` typings. If you want editor support for the HTTP API, extend `golt.d.ts` manually:
-
-```ts
-type HttpContext = {
-  Method(): string;
-  Url(): string;
-  Status(code: number): HttpContext;
-  Send(body: string): void;
-};
-
-declare namespace Golt {
-  export function serve(port: number, handler: (ctx: HttpContext) => void): void;
-}
-```
+`golt init` currently generates a richer `golt.d.ts` that includes `AppInstance`, `Context`, middleware types, and schema inference helpers.
 
 ## Repository Layout
 
@@ -170,7 +187,9 @@ declare namespace Golt {
 - `runtime/engine.go`: compilation (esbuild) + execution (goja + event loop)
 - `runtime/console.go`: `console.log` native module
 - `runtime/env.go`: `Golt.env` native module
-- `runtime/http.go`: `Golt.serve` HTTP server module
+- `runtime/context.go`: HTTP `Context` implementation (params, JSON, body validation)
+- `runtime/logger.go`: `Golt.logger` middleware factory
+- `runtime/http.go`: `Golt.App()` HTTP app (routes, middleware, server)
 
 ## Documentation Site (GitHub Pages)
 

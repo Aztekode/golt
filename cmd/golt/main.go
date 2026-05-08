@@ -31,6 +31,7 @@ func main() {
 			engine := runtime.NewEngine()
 			engine.Register(runtime.InitConsole)
 			engine.Register(runtime.InitEnv)
+			engine.Register(runtime.InitLogger)
 			engine.Register(runtime.InitHttp)
 
 			engine.RunFile(filename)
@@ -46,19 +47,56 @@ func main() {
 
 func initProject() {
 	dtsContents := `/***
-* Golt Runtime - TS/JS Backend Engine Global Definitions
-*/
+ * Golt Runtime - TS/JS Backend Engine Global Definitions
+ ***/
 declare namespace Golt {
   export const env: Record<string, string | undefined>;
+
+  export type SchemaType = "string" | "number" | "boolean";
+
+  export type InferType<T> = T extends "string"
+    ? string
+    : T extends "number"
+      ? number
+      : T extends "boolean"
+        ? boolean
+        : never;
+
+  export type InferSchema<T extends Record<string, SchemaType>> = {
+    [K in keyof T]: InferType<T[K]>;
+  };
+
+  export type Next = () => void;
+  export type Middleware = (c: Context, next: Next) => void;
+
+  export interface LoggerConfig {
+    format?: "dev" | "tiny" | "json";
+  }
 
   export interface Context {
     Method(): string;
     Url(): string;
+    Param(name: string): string;
     Status(code: number): Context;
     Send(body: string): void;
+    Json(data: any): void;
+    ValidateBody<T extends Record<string, SchemaType>>(
+      schema: T,
+    ): InferSchema<T> | null;
   }
 
-  export function serve(port: number, handler: (c: Context) => void): void;
+  export interface AppInstance {
+    use(middleware: Middleware): AppInstance; // <-- Añadido
+    get(path: string, handler: (c: Context) => void): AppInstance;
+    post(path: string, handler: (c: Context) => void): AppInstance;
+    put(path: string, handler: (c: Context) => void): AppInstance;
+    delete(path: string, handler: (c: Context) => void): AppInstance;
+    notFound(handler: (c: Context) => void): AppInstance;
+    serve(port: number): void;
+  }
+
+  export function App(): AppInstance;
+  export function logger(config?: LoggerConfig): Middleware; // <-- Añadido
 }
 `
 	os.WriteFile("golt.d.ts", []byte(dtsContents), 0644)
