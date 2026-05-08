@@ -69,7 +69,7 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 
 		go func() {
 			fmt.Printf("Server is running on port %d\n", port)
-			if err := srv.ListenAndServe(); err != nil {
+			if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 				fmt.Println("Critical error on server: ", err)
 			}
 		}()
