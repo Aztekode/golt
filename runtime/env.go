@@ -7,7 +7,7 @@ import (
 	"github.com/dop251/goja"
 )
 
-func InitEnv(vm *goja.Runtime) {
+func InitEnv(vm *goja.Runtime, e *GoltEngine) {
 	goltObj := vm.Get("Golt")
 	var golt *goja.Object
 

@@ -31,6 +31,7 @@ func main() {
 			engine := runtime.NewEngine()
 			engine.Register(runtime.InitConsole)
 			engine.Register(runtime.InitEnv)
+			engine.Register(runtime.InitHttp)
 
 			engine.RunFile(filename)
 		},

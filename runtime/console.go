@@ -6,7 +6,7 @@ import (
 	"github.com/dop251/goja"
 )
 
-func InitConsole(vm *goja.Runtime) {
+func InitConsole(vm *goja.Runtime, e *GoltEngine) {
 	console := vm.NewObject()
 
 	console.Set("log", func(call goja.FunctionCall) goja.Value {

@@ -3,17 +3,19 @@ package runtime
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/dop251/goja"
 	"github.com/dop251/goja_nodejs/eventloop"
 	"github.com/evanw/esbuild/pkg/api"
 )
 
-type NativeModule func(vm *goja.Runtime)
+type NativeModule func(vm *goja.Runtime, e *GoltEngine)
 
 type GoltEngine struct {
 	loop    *eventloop.EventLoop
 	modules []NativeModule
+	Wg      sync.WaitGroup
 }
 
 func NewEngine() *GoltEngine {
@@ -48,9 +50,15 @@ func (e *GoltEngine) RunFile(filename string) {
 
 	compiledCode := string(buildResult.OutputFiles[0].Contents)
 
-	e.loop.Run(func(vm *goja.Runtime) {
+	e.loop.Start()
+	defer e.loop.Stop()
+
+	var scriptWg sync.WaitGroup
+	scriptWg.Add(1)
+
+	e.loop.RunOnLoop(func(vm *goja.Runtime) {
 		for _, module := range e.modules {
-			module(vm)
+			module(vm, e)
 		}
 
 		_, err := vm.RunString(compiledCode)
@@ -62,5 +70,10 @@ func (e *GoltEngine) RunFile(filename string) {
 			}
 			os.Exit(1)
 		}
+
+		scriptWg.Done()
 	})
+
+	scriptWg.Wait()
+	e.Wg.Wait()
 }
