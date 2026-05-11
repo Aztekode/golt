@@ -12,6 +12,7 @@ type HttpContext struct {
 	r      *http.Request
 	status int
 	done   chan struct{}
+	locals map[string]any
 	mu     sync.Once
 }
 
@@ -26,6 +27,14 @@ func (c *HttpContext) Url() string    { return c.r.URL.Path }
 
 func (c *HttpContext) Param(name string) string {
 	return c.r.PathValue(name)
+}
+
+func (c *HttpContext) Set(key string, value any) {
+	c.locals[key] = value
+}
+
+func (c *HttpContext) Get(key string) any {
+	return c.locals[key]
 }
 
 func (c *HttpContext) GetHeader(key string) string {

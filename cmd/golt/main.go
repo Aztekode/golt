@@ -36,6 +36,7 @@ func main() {
 			engine.Register(runtime.InitDB)
 			engine.Register(runtime.InitFs)
 			engine.Register(runtime.InitFetch)
+			engine.Register(runtime.InitCrypto)
 
 			engine.RunFile(filename)
 		},
@@ -53,23 +54,23 @@ func initProject() {
  * Golt Runtime - TS/JS Backend Engine Global Definitions
  ***/
 declare interface FetchHeaders {
-    get(name: string): string | null;
+  get(name: string): string | null;
 }
 
 declare interface FetchResponse {
-    ok: boolean;
-    status: number;
-    statusText: string;
-    headers: FetchHeaders;
-    text(): Promise<string>;
-    json<T = any>(): Promise<T>;
+  ok: boolean;
+  status: number;
+  statusText: string;
+  headers: FetchHeaders;
+  text(): Promise<string>;
+  json<T = any>(): Promise<T>;
 }
 
 declare interface FetchOptions {
-    method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-    headers?: Record<string, string>;
-    body?: string;
-    timeout?: number;
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  headers?: Record<string, string>;
+  body?: string;
+  timeout?: number;
 }
 
 declare function fetch(url: string, options?: FetchOptions): Promise<FetchResponse>;
@@ -111,6 +112,8 @@ declare namespace Golt {
     Param(name: string): string;
     GetHeader(key: string): string;
     SetHeader(key: string, value: string): void;
+    Set(key: string, value: any): void;
+    Get<T = any>(key: string): T | undefined;
     Query(key: string): string;
     Status(code: number): Context;
     Send(body: string): void;
@@ -125,8 +128,18 @@ declare namespace Golt {
     writeFile(path: string, content: string): void;
   }
 
+  export interface Crypto {
+    hash(password: string, cost?: number): Promise<string>;
+    compare(password: string, hash: string): Promise<boolean>;
+  }
+
+  export interface Jwt {
+    sign(payload: Record<string, any>, secret: string, expHours?: number): string;
+    verify<T = Record<string, any>>(token: string, secret: string): T | null;
+  }
+
   export interface AppInstance {
-    use(middleware: Middleware): AppInstance; // <-- Añadido
+    use(middleware: Middleware): AppInstance;
     get(path: string, handler: (c: Context) => void): AppInstance;
     post(path: string, handler: (c: Context) => void): AppInstance;
     put(path: string, handler: (c: Context) => void): AppInstance;
@@ -139,8 +152,10 @@ declare namespace Golt {
   export function App(): AppInstance;
   export const db: Database;
   export const fs: Fs;
+  export const crypto: Crypto;
+  export const jwt: Jwt;
 
-  export function logger(config?: LoggerConfig): Middleware; // <-- Añadido
+  export function logger(config?: LoggerConfig): Middleware;
 }
 `
 	os.WriteFile("golt.d.ts", []byte(dtsContents), 0644)

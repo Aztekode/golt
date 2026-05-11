@@ -47,9 +47,10 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 
 			mux.HandleFunc(routerPattern, func(w http.ResponseWriter, r *http.Request) {
 				ctx := &HttpContext{
-					w:    w,
-					r:    r,
-					done: make(chan struct{}),
+					w:      w,
+					r:      r,
+					done:   make(chan struct{}),
+					locals: make(map[string]any),
 				}
 
 				e.loop.RunOnLoop(func(vm *goja.Runtime) {
