@@ -24,7 +24,7 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 		appObj.Set("use", func(call goja.FunctionCall) goja.Value {
 			handler, ok := goja.AssertFunction(call.Argument(0))
 			if !ok {
-				panic("app.use require a function callback")
+				panic("app.use requires a function callback")
 			}
 			middlewares = append(middlewares, handler)
 			return appObj
@@ -35,7 +35,7 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 			handler, ok := goja.AssertFunction(call.Argument(1))
 
 			if !ok {
-				panic(fmt.Sprintf("app.%s require a function callback", method))
+				panic(fmt.Sprintf("app.%s requires a function callback", method))
 			}
 
 			exactPath := path
@@ -46,11 +46,13 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 			routerPattern := fmt.Sprintf("%s %s", method, exactPath)
 
 			mux.HandleFunc(routerPattern, func(w http.ResponseWriter, r *http.Request) {
-				done := make(chan struct{})
-				e.loop.RunOnLoop(func(vm *goja.Runtime) {
-					defer close(done)
+				ctx := &HttpContext{
+					w:    w,
+					r:    r,
+					done: make(chan struct{}),
+				}
 
-					ctx := &HttpContext{w: w, r: r}
+				e.loop.RunOnLoop(func(vm *goja.Runtime) {
 					ctxVal := vm.ToValue(ctx)
 
 					chain := append([]goja.Callable{}, middlewares...)
@@ -65,13 +67,15 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 							if err != nil {
 								fmt.Println("Error HTTP: ", err)
 								http.Error(w, "Internal server error", http.StatusInternalServerError)
+								ctx.finish()
 							}
 						}
 					}
 
 					next()
 				})
-				<-done
+
+				<-ctx.done
 			})
 			return appObj
 		}
@@ -81,17 +85,55 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 		appObj.Set("put", func(call goja.FunctionCall) goja.Value { return registerRoute("PUT", call) })
 		appObj.Set("delete", func(call goja.FunctionCall) goja.Value { return registerRoute("DELETE", call) })
 
+		appObj.Set("static", func(call goja.FunctionCall) goja.Value {
+			prefix := call.Argument(0).String()
+			dirPath := call.Argument(1).String()
+
+			spaFallback := false
+			if len(call.Arguments) > 2 {
+				spaFallback = call.Argument(2).ToBoolean()
+			}
+
+			if prefix == "" || dirPath == "" {
+				panic("app.static requires prefix and dirPath arguments")
+			}
+
+			pattern := fmt.Sprintf("GET %s/", prefix)
+
+			fileServer := http.StripPrefix(prefix, http.FileServer(http.Dir(dirPath)))
+
+			mux.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+				if spaFallback {
+					path := r.URL.Path[len(prefix):]
+					fpath := fmt.Sprintf("%s/%s", dirPath, path)
+					if _, err := os.Stat(fpath); os.IsNotExist(err) {
+						http.ServeFile(w, r, fmt.Sprintf("%s/index.html", dirPath))
+						return
+					}
+				}
+				fileServer.ServeHTTP(w, r)
+			})
+
+			fmt.Printf("\033[35;1m[Golt] Static folder mapped: %s -> %s\033[0m\n", prefix, dirPath)
+
+			return appObj
+		})
+
 		appObj.Set("notFound", func(call goja.FunctionCall) goja.Value {
 			handler, ok := goja.AssertFunction(call.Argument(0))
 			if !ok {
-				panic("app.notFound require a function callback")
+				panic("app.notFound requires a function callback")
 			}
 
 			mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-				done := make(chan struct{})
+				// Aplicamos exactamente el mismo ajuste para el handler de 404
+				ctx := &HttpContext{
+					w:    w,
+					r:    r,
+					done: make(chan struct{}),
+				}
+
 				e.loop.RunOnLoop(func(vm *goja.Runtime) {
-					defer close(done)
-					ctx := &HttpContext{w: w, r: r}
 					ctx.status = http.StatusNotFound
 					ctxVal := vm.ToValue(ctx)
 
@@ -107,12 +149,13 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 							if err != nil {
 								fmt.Println("Error HTTP: ", err)
 								http.Error(w, "Internal server error", http.StatusInternalServerError)
+								ctx.finish()
 							}
 						}
 					}
 					next()
 				})
-				<-done
+				<-ctx.done
 			})
 			return appObj
 		})

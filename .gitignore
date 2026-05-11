@@ -7,3 +7,5 @@ golt.exe
 golt
 !golt/
 .env
+*.db
+public/
