@@ -2,7 +2,6 @@ package runtime
 
 import (
 	"fmt"
-	"os"
 	"sync"
 
 	"github.com/dop251/goja"
@@ -30,7 +29,7 @@ func (e *GoltEngine) Register(module NativeModule) {
 	e.modules = append(e.modules, module)
 }
 
-func (e *GoltEngine) RunFile(filename string) {
+func (e *GoltEngine) RunFile(filename string) error {
 	buildResult := api.Build(api.BuildOptions{
 		EntryPoints: []string{filename},
 		Bundle:      true,
@@ -41,11 +40,7 @@ func (e *GoltEngine) RunFile(filename string) {
 	})
 
 	if len(buildResult.Errors) > 0 {
-		fmt.Printf("Error on compilation: %s:\n", filename)
-		for _, err := range buildResult.Errors {
-			fmt.Printf("- %s\n", err.Text)
-			os.Exit(1)
-		}
+		return fmt.Errorf("compilation error in %s: %s", filename, buildResult.Errors[0].Text)
 	}
 
 	compiledCode := string(buildResult.OutputFiles[0].Contents)
@@ -56,7 +51,11 @@ func (e *GoltEngine) RunFile(filename string) {
 	var scriptWg sync.WaitGroup
 	scriptWg.Add(1)
 
+	var runErr error
+
 	e.loop.RunOnLoop(func(vm *goja.Runtime) {
+		defer scriptWg.Done()
+
 		for _, module := range e.modules {
 			module(vm, e)
 		}
@@ -64,16 +63,20 @@ func (e *GoltEngine) RunFile(filename string) {
 		_, err := vm.RunString(compiledCode)
 		if err != nil {
 			if jsErr, ok := err.(*goja.Exception); ok {
-				fmt.Printf("Error on Golt Runtime:\n%v\n", jsErr.String())
+				runErr = fmt.Errorf("Runtime Error:\n%v", jsErr.String())
 			} else {
-				fmt.Printf("Internal Error:\n%v\n", err)
+				runErr = fmt.Errorf("Internal Error:\n%v", err)
 			}
-			os.Exit(1)
+			return
 		}
-
-		scriptWg.Done()
 	})
 
 	scriptWg.Wait()
+
+	if runErr != nil {
+		return runErr
+	}
+
 	e.Wg.Wait()
+	return nil
 }

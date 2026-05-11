@@ -3,21 +3,35 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
+	"strings"
+	"time"
 
 	"github.com/atrox39/golt/runtime"
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
+)
+
+const (
+	Reset   = "\033[0m"
+	Cyan    = "\033[36;1m"
+	Green   = "\033[32;1m"
+	Yellow  = "\033[33;1m"
+	Magenta = "\033[35;1m"
+	Red     = "\033[31;1m"
 )
 
 func main() {
 	var rootCmd = &cobra.Command{
-		Use:   "golt",
-		Short: "Golt Runtime - TS/JS Backend Engine",
-		Long:  `Golt Runtime is a TypeScript/JavaScript backend engine that allows you to run TypeScript code in as Node.js environment.`,
+		Use:     "golt",
+		Short:   "Golt Runtime - TS/JS Backend Engine",
+		Long:    fmt.Sprintf("%s[Golt] Runtime%s\nA blazing fast backend engine to run TypeScript/JavaScript directly on Go.", Cyan, Reset),
+		Version: "1.0.0",
 	}
 
 	var initCmd = &cobra.Command{
 		Use:   "init",
-		Short: "Initialize new Golt project",
+		Short: "Initialize a new Golt project",
 		Run: func(cmd *cobra.Command, args []string) {
 			initProject()
 		},
@@ -25,9 +39,12 @@ func main() {
 
 	var runCmd = &cobra.Command{
 		Use:   "run [filename.ts]",
-		Short: "Run file in Golt environment",
+		Short: "Run a file in the Golt environment",
+		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			filename := args[0]
+			fmt.Printf("%s[Golt] * Starting %s...%s\n", Cyan, filename, Reset)
+
 			engine := runtime.NewEngine()
 			engine.Register(runtime.InitConsole)
 			engine.Register(runtime.InitEnv)
@@ -38,13 +55,27 @@ func main() {
 			engine.Register(runtime.InitFetch)
 			engine.Register(runtime.InitCrypto)
 
-			engine.RunFile(filename)
+			if err := engine.RunFile(filename); err != nil {
+				fmt.Printf("%s[Golt] [ERROR] Execution error: %v%s\n", Red, err, Reset)
+				os.Exit(1)
+			}
 		},
 	}
 
-	rootCmd.AddCommand(initCmd, runCmd)
+	var watchCmd = &cobra.Command{
+		Use:   "watch [filename.ts]",
+		Short: "Run a file and automatically restart on changes",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			filename := args[0]
+			watchApp(filename)
+		},
+	}
+
+	rootCmd.AddCommand(initCmd, runCmd, watchCmd)
 
 	if err := rootCmd.Execute(); err != nil {
+		fmt.Printf("%s[Golt] [ERROR] Unrecognized command.%s\n", Red, Reset)
 		os.Exit(1)
 	}
 }
@@ -101,9 +132,14 @@ declare namespace Golt {
 
   export type DbDialect = "sqlite" | "postgres" | "mysql" | "sqlserver";
 
-  export interface Database {
-    connect(dialect: DbDialect, connectionString: string): void;
+  export interface DatabaseClient {
     query<T = any>(sql: string, ...args: any[]): Promise<T[]>;
+    close(): void;
+  }
+
+  export interface Database {
+    connect(dialect: DbDialect, connectionString: string): DatabaseClient; 
+    query<T = any>(sql: string, ...args: any[]): Promise<T[]>; 
   }
 
   export interface Context {
@@ -156,9 +192,7 @@ declare namespace Golt {
   export const jwt: Jwt;
 
   export function logger(config?: LoggerConfig): Middleware;
-}
-`
-	os.WriteFile("golt.d.ts", []byte(dtsContents), 0644)
+}`
 
 	tsConfigContent := `{
 	"compilerOptions": {
@@ -176,16 +210,78 @@ declare namespace Golt {
 	]
 }
 `
-	os.WriteFile("tsconfig.json", []byte(tsConfigContent), 0644)
 
 	appTsContent := `console.log('Hello, Golt!');`
 
+	os.WriteFile("golt.d.ts", []byte(dtsContents), 0644)
+	os.WriteFile("tsconfig.json", []byte(tsConfigContent), 0644)
 	os.WriteFile("app.ts", []byte(appTsContent), 0644)
 
-	fmt.Println("Golt Project Initialized. Files created:")
-	fmt.Println("- golt.d.ts (Global Definitions)")
-	fmt.Println("- tsconfig.json (TypeScript Configuration)")
-	fmt.Println("- app.ts (Entry Point)")
-	fmt.Println("Run the project with:")
-	fmt.Println("golt run app.ts")
+	fmt.Printf("%s[Golt] * Proyecto inicializado con éxito. Archivos creados:%s\n", Green, Reset)
+	fmt.Printf("  %s+%s golt.d.ts (Definiciones Globales)\n", Green, Reset)
+	fmt.Printf("  %s+%s tsconfig.json (Configuración de TypeScript)\n", Green, Reset)
+	fmt.Printf("  %s+%s app.ts (Punto de entrada)\n\n", Green, Reset)
+
+	fmt.Printf("%s[Golt] Ejecuta tu proyecto con:%s\n", Cyan, Reset)
+	fmt.Printf("  golt run app.ts\n")
+	fmt.Printf("  golt watch app.ts\n")
+}
+
+func watchApp(filePath string) {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		fmt.Printf("%s[Golt] [ERROR] Error starting watcher: %v%s\n", Red, err, Reset)
+		return
+	}
+	defer watcher.Close()
+
+	if err := watcher.Add("."); err != nil {
+		fmt.Printf("%s[Golt] [ERROR] Error watching directory: %v%s\n", Red, err, Reset)
+		return
+	}
+
+	fmt.Printf("%s[Golt] [WATCH] Watch mode activated. Waiting for changes in %s...%s\n", Magenta, filePath, Reset)
+
+	var cmd *exec.Cmd
+
+	startProcess := func() {
+		if cmd != nil && cmd.Process != nil {
+			cmd.Process.Kill()
+			cmd.Wait()
+		}
+
+		cmd = exec.Command(os.Args[0], "run", filePath)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+
+		if err := cmd.Start(); err != nil {
+			fmt.Printf("%s[Golt] [ERROR] Error starting process: %v%s\n", Red, err, Reset)
+		}
+	}
+
+	startProcess()
+
+	var lastEvent time.Time
+	for {
+		select {
+		case event, ok := <-watcher.Events:
+			if !ok {
+				return
+			}
+
+			if strings.HasSuffix(event.Name, ".js") || strings.HasSuffix(event.Name, ".ts") {
+				if event.Op&(fsnotify.Write|fsnotify.Create) != 0 && time.Since(lastEvent) > 500*time.Millisecond {
+					lastEvent = time.Now()
+					fmt.Print("\033[2J\033[H")
+					fmt.Printf("%s[Golt] [RELOAD] Changes detected. Restarting server...%s\n", Yellow, Reset)
+					startProcess()
+				}
+			}
+		case err, ok := <-watcher.Errors:
+			if !ok {
+				return
+			}
+			fmt.Printf("%s[Golt] [ERROR] Watcher error: %v%s\n", Red, err, Reset)
+		}
+	}
 }
