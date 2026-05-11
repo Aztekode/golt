@@ -103,6 +103,52 @@
   <a class="absolute left-[-999px] top-auto h-px w-px overflow-hidden rounded-xl border border-white/15 bg-[#111827] px-3 py-2 text-sm text-white focus:left-4 focus:top-4 focus:h-auto focus:w-auto focus:z-[9999] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
     href="#content">Skip to content</a>
 
+  <svg class="hidden" aria-hidden="true" width="0" height="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-bolt" viewBox="0 0 24 24">
+      <path d="M13 2L3 14h7l-1 8 12-14h-7l-1-6z" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24">
+      <path d="M5 7h14M5 12h14M5 17h14" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24">
+      <path d="M5 12h12m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24">
+      <path d="M9 18l6-6-6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-external" viewBox="0 0 24 24">
+      <path d="M14 3h7v7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      <path d="M21 3l-10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      <path d="M10 7H7a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3" fill="none"
+        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24">
+      <path d="M9 9h10v10H9z" fill="none" stroke="currentColor" stroke-width="1.8" />
+      <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" fill="none"
+        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round" />
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 24 24">
+      <path d="M7 7l10 10M17 7 7 17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    </symbol>
+    <symbol id="i-github" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+        d="M9 19c-4 1.5-4-2-6-2m12 4v-3.5c0-1 .1-1.4-.5-2 2-.2 4-1 4-4.5 0-1-.3-2-.9-2.8.1-.2.4-1.4-.1-2.7 0 0-1-.3-3 .9-.9-.3-1.9-.4-2.9-.4s-2 .1-2.9.4c-2-1.2-3-.9-3-.9-.5 1.3-.2 2.5-.1 2.7C5.3 6.5 5 7.5 5 8.5c0 3.5 2 4.3 4 4.5-.4.4-.6.9-.6 1.7V21" />
+    </symbol>
+    <symbol id="i-up" viewBox="0 0 24 24">
+      <path d="M12 5v14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      <path d="M7 10l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round" />
+    </symbol>
+  </svg>
+
   <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
     <div class="absolute inset-0 opacity-70" style="background:
         radial-gradient(1100px 700px at 18% 10%, rgba(59, 130, 246, .22), transparent 55%),
@@ -126,8 +172,8 @@
         href="#top" aria-label="Golt home">
         <span
           class="grid h-10 w-10 place-items-center rounded-xl border border-white/15 bg-gradient-to-br from-[#1E40AF] via-black to-black shadow-[0_18px_60px_rgba(0,0,0,.55)]">
-          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M13 2L3 14h7l-1 8 12-14h-7l-1-6z" stroke="#FCD34D" stroke-width="1.8" stroke-linejoin="round" />
+          <svg class="h-5 w-5 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+            <use href="#i-bolt"></use>
           </svg>
         </span>
         <span class="min-w-0">
@@ -148,17 +194,27 @@
       </nav>
 
       <div class="flex items-center gap-2.5">
-        <a class="hidden rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none sm:inline-flex focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          href="https://github.com/atrox39/golt" rel="noreferrer">GitHub</a>
-        <a class="rounded-full bg-[#FCD34D] px-4 py-2 text-sm font-semibold text-black shadow-[0_18px_60px_rgba(252,211,77,.12)] transition hover:-translate-y-0.5 hover:bg-[#F59E0B] active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          href="#quickstart">Get started</a>
+        <a class="hidden items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none sm:inline-flex focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          href="https://github.com/atrox39/golt" rel="noreferrer">
+          <svg class="h-4 w-4 text-white/90" viewBox="0 0 24 24" aria-hidden="true">
+            <use href="#i-github"></use>
+          </svg>
+          <span>GitHub</span>
+        </a>
+        <a class="inline-flex items-center gap-2 rounded-full bg-[#FCD34D] px-4 py-2 text-sm font-semibold text-black shadow-[0_18px_60px_rgba(252,211,77,.12)] transition hover:-translate-y-0.5 hover:bg-[#F59E0B] active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          href="#quickstart">
+          <span>Get started</span>
+          <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+            <use href="#i-arrow-right"></use>
+          </svg>
+        </a>
 
         <button
           class="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-3 py-2 text-sm text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none md:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           id="menuBtn" type="button" aria-controls="mobileMenu" aria-expanded="false">
           <span class="sr-only">Open menu</span>
-          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+            <use href="#i-menu"></use>
           </svg>
         </button>
       </div>
@@ -193,9 +249,8 @@
           <div data-reveal
             class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-white/80 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
             <span class="grid h-6 w-6 place-items-center rounded-full bg-[#1E40AF]/40">
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M13 2L3 14h7l-1 8 12-14h-7l-1-6z" stroke="#FCD34D" stroke-width="1.8"
-                  stroke-linejoin="round" />
+              <svg class="h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-bolt"></use>
               </svg>
             </span>
             <span class="font-semibold text-white">Go + Volt</span>
@@ -219,16 +274,15 @@
             <a class="inline-flex items-center justify-center gap-2 rounded-full bg-[#FCD34D] px-5 py-3 text-sm font-semibold text-black shadow-[0_18px_60px_rgba(252,211,77,.12)] transition hover:-translate-y-0.5 hover:bg-[#F59E0B] active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               href="#quickstart">
               <span>Get started</span>
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5 12h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-arrow-right"></use>
               </svg>
             </a>
             <a class="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               href="#api">
               <span>See the API</span>
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
+              <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-chevron-right"></use>
               </svg>
             </a>
           </div>
@@ -247,8 +301,8 @@
             </div>
             <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
               <div class="text-xs text-white/60">Built-ins</div>
-              <div class="mt-1 text-sm font-semibold">console + env + App + logger</div>
-              <div class="mt-1 text-xs text-white/55">Runtime primitives + HTTP app framework</div>
+              <div class="mt-1 text-sm font-semibold">HTTP + db + fs + fetch</div>
+              <div class="mt-1 text-xs text-white/55">Explicit backend primitives, no Node runtime</div>
             </div>
           </div>
         </div>
@@ -267,8 +321,19 @@
                 <div class="truncate text-sm font-semibold">Quickstart</div>
               </div>
               <button
-                class="copybtn rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                type="button" data-copy="#hero-snippet">Copy</button>
+                class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                type="button" data-copy="#hero-snippet" data-label="Copy">
+                <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-copy"></use>
+                </svg>
+                <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-check"></use>
+                </svg>
+                <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-x"></use>
+                </svg>
+                <span class="copy-label" aria-live="polite">Copy</span>
+              </button>
             </div>
 
             <pre
@@ -287,6 +352,8 @@ app.get("/", (c) =&gt; {
 app.get("/users/{id}", (c) =&gt; {
   c.Json({ id: c.Param("id") });
 });
+
+app.static("/public", "./public", true);
 
 app.notFound((c) =&gt; {
   c.Status(404).Send("not found");
@@ -332,9 +399,8 @@ app.serve(3000);</code></pre>
           <a class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             href="#quickstart">
             <span>Jump to quickstart</span>
-            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round" />
+            <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+              <use href="#i-chevron-right"></use>
             </svg>
           </a>
         </div>
@@ -451,6 +517,39 @@ app.serve(3000);</code></pre>
         <div data-reveal
           class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
           <div class="flex items-start gap-3">
+            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-[#3B82F6]/15 ring-1 ring-white/10">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 7h16M7 12h10M9 17h6" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm font-semibold">Database access</div>
+              <p class="mt-1 text-sm text-white/65"><code class="text-white">Golt.db</code> wraps Go <code
+                  class="text-white">database/sql</code> with Promise-based queries.</p>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal
+          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
+          <div class="flex items-start gap-3">
+            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-[#FCD34D]/15 ring-1 ring-white/10">
+              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 12h7l2-3 2 6 2-3h3" stroke="#FCD34D" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm font-semibold">fetch + crypto</div>
+              <p class="mt-1 text-sm text-white/65">Outbound HTTP via <code class="text-white">fetch</code>, plus <code
+                  class="text-white">Golt.crypto</code> and <code class="text-white">Golt.jwt</code>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal
+          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
+          <div class="flex items-start gap-3">
             <div class="grid h-10 w-10 place-items-center rounded-2xl bg-white/5 ring-1 ring-white/10">
               <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M9 12l2 2 4-4" stroke="#FCD34D" stroke-width="1.8" stroke-linecap="round"
@@ -478,8 +577,11 @@ app.serve(3000);</code></pre>
           <p class="mt-3 max-w-[72ch] text-sm leading-relaxed text-white/70">
             Golt is intentionally simple: it builds a bundle from your entry file, spins up a Go-hosted runtime, then
             registers native modules (like <code class="text-white">console</code>, <code
-              class="text-white">Golt.env</code>, <code class="text-white">Golt.logger</code>, and <code
-              class="text-white">Golt.App</code>) before executing your program.
+              class="text-white">Golt.env</code>, <code class="text-white">Golt.logger</code>, <code
+              class="text-white">Golt.App</code>, <code class="text-white">Golt.db</code>, <code
+              class="text-white">Golt.fs</code>, <code class="text-white">Golt.crypto</code>/<code
+              class="text-white">Golt.jwt</code>, and <code class="text-white">fetch()</code>) before executing your
+            program.
           </p>
         </div>
 
@@ -526,9 +628,9 @@ app.serve(3000);</code></pre>
         <div class="text-xs tracking-wide text-white/55">API</div>
         <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Small, explicit runtime primitives.</h2>
         <p class="mt-3 max-w-[72ch] text-sm leading-relaxed text-white/70">
-          Today, Golt ships four primitives: <code class="text-white">console.log</code>, <code
-            class="text-white">Golt.env</code>, <code class="text-white">Golt.App</code>, and <code
-            class="text-white">Golt.logger</code>.
+          Golt exposes an explicit backend surface area: <code class="text-white">console.log</code>, global <code
+            class="text-white">fetch()</code>, and <code class="text-white">Golt.*</code> modules for env, HTTP, DB, FS,
+          crypto/JWT, and logging.
         </p>
       </div>
 
@@ -541,8 +643,19 @@ app.serve(3000);</code></pre>
               <p class="mt-2 text-sm text-white/65">Print exported JS values to stdout.</p>
             </div>
             <button
-              class="copybtn rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-console">Copy</button>
+              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              type="button" data-copy="#api-console" data-label="Copy">
+              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-copy"></use>
+              </svg>
+              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-check"></use>
+              </svg>
+              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-x"></use>
+              </svg>
+              <span class="copy-label" aria-live="polite">Copy</span>
+            </button>
           </div>
           <pre
             class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-console">console.log("Hello from Golt");
@@ -558,12 +671,140 @@ console.log({ ok: true, now: Date.now() });</code></pre>
                   class="text-white">Record&lt;string, string | undefined&gt;</code>.</p>
             </div>
             <button
-              class="copybtn rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-env">Copy</button>
+              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              type="button" data-copy="#api-env" data-label="Copy">
+              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-copy"></use>
+              </svg>
+              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-check"></use>
+              </svg>
+              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-x"></use>
+              </svg>
+              <span class="copy-label" aria-live="polite">Copy</span>
+            </button>
           </div>
           <pre
             class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-env">console.log("PATH =", Golt.env["PATH"]);
 console.log("NODE_ENV =", Golt.env["NODE_ENV"]);</code></pre>
+        </div>
+
+        <div data-reveal
+          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-sm font-semibold"><code class="text-white">fetch(url, options?)</code></div>
+              <p class="mt-2 text-sm text-white/65">Outbound HTTP via Go <code class="text-white">net/http</code>, with a
+                minimal Response API.</p>
+            </div>
+            <button
+              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              type="button" data-copy="#api-fetch" data-label="Copy">
+              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-copy"></use>
+              </svg>
+              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-check"></use>
+              </svg>
+              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-x"></use>
+              </svg>
+              <span class="copy-label" aria-live="polite">Copy</span>
+            </button>
+          </div>
+          <pre
+            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-fetch">fetch("https://httpbin.org/json")
+  .then((r) =&gt; r.json())
+  .then((data) =&gt; console.log(data));</code></pre>
+        </div>
+
+        <div data-reveal
+          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-sm font-semibold"><code class="text-white">Golt.db</code></div>
+              <p class="mt-2 text-sm text-white/65">Promise-based SQL queries over Go <code
+                  class="text-white">database/sql</code> (sqlite/postgres/mysql/sqlserver).</p>
+            </div>
+            <button
+              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              type="button" data-copy="#api-db" data-label="Copy">
+              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-copy"></use>
+              </svg>
+              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-check"></use>
+              </svg>
+              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-x"></use>
+              </svg>
+              <span class="copy-label" aria-live="polite">Copy</span>
+            </button>
+          </div>
+          <pre
+            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-db">const db = Golt.db.connect("sqlite", "./app.db");
+db.query("SELECT 1 AS ok").then((rows) =&gt; console.log(rows));</code></pre>
+        </div>
+
+        <div data-reveal
+          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-sm font-semibold"><code class="text-white">Golt.fs</code></div>
+              <p class="mt-2 text-sm text-white/65">Minimal filesystem helpers (<code
+                  class="text-white">readFile</code>/<code class="text-white">writeFile</code>).</p>
+            </div>
+            <button
+              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              type="button" data-copy="#api-fs" data-label="Copy">
+              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-copy"></use>
+              </svg>
+              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-check"></use>
+              </svg>
+              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-x"></use>
+              </svg>
+              <span class="copy-label" aria-live="polite">Copy</span>
+            </button>
+          </div>
+          <pre
+            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-fs">Golt.fs.writeFile("./hello.txt", "Hello from Golt\n");
+console.log(Golt.fs.readFile("./hello.txt"));</code></pre>
+        </div>
+
+        <div data-reveal
+          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-sm font-semibold"><code class="text-white">Golt.crypto</code> + <code
+                  class="text-white">Golt.jwt</code></div>
+              <p class="mt-2 text-sm text-white/65">bcrypt hashing + HS256 JWT helpers.</p>
+            </div>
+            <button
+              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              type="button" data-copy="#api-crypto" data-label="Copy">
+              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-copy"></use>
+              </svg>
+              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-check"></use>
+              </svg>
+              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-x"></use>
+              </svg>
+              <span class="copy-label" aria-live="polite">Copy</span>
+            </button>
+          </div>
+          <pre
+            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-crypto">Golt.crypto.hash("password123").then((hash) =&gt; {
+  return Golt.crypto.compare("password123", hash);
+}).then((ok) =&gt; console.log("match =", ok));
+
+const token = Golt.jwt.sign({ sub: "user_123" }, "secret", 24);
+console.log(Golt.jwt.verify(token, "secret"));</code></pre>
         </div>
 
         <div data-reveal
@@ -575,8 +816,19 @@ console.log("NODE_ENV =", Golt.env["NODE_ENV"]);</code></pre>
                   class="text-white">app.serve(port)</code>.</p>
             </div>
             <button
-              class="copybtn rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-app">Copy</button>
+              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              type="button" data-copy="#api-app" data-label="Copy">
+              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-copy"></use>
+              </svg>
+              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-check"></use>
+              </svg>
+              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-x"></use>
+              </svg>
+              <span class="copy-label" aria-live="polite">Copy</span>
+            </button>
           </div>
 
           <div class="mt-3 rounded-2xl border border-white/10 bg-black/30 p-4 text-xs text-white/65">
@@ -584,6 +836,7 @@ console.log("NODE_ENV =", Golt.env["NODE_ENV"]);</code></pre>
             <code class="text-white">/users/{id}</code>). Access params with <code
               class="text-white">c.Param("id")</code>.
             Middleware runs in a simple <code class="text-white">next()</code> chain before the route handler.
+            Serve static files with <code class="text-white">app.static("/public", "./public", true)</code>.
           </div>
 
           <pre
@@ -595,13 +848,16 @@ app.get("/users/{id}", (c) =&gt; {
   c.Json({ id: c.Param("id") });
 });
 
+app.static("/public", "./public", true);
+
 app.notFound((c) =&gt; c.Status(404).Send("not found"));
 
 app.serve(3000);</code></pre>
 
           <div class="mt-4 text-xs text-white/60">
             <span class="font-semibold text-white/80">Context:</span>
-            <span class="ml-1">Method(), Url(), Param(), Status(), Send(), Json(), ValidateBody()</span>
+            <span class="ml-1">Method(), Url(), Param(), GetHeader(), SetHeader(), Query(), Set(), Get(), Status(),
+              Send(), Json(), ValidateBody()</span>
           </div>
         </div>
 
@@ -614,12 +870,24 @@ app.serve(3000);</code></pre>
                   class="text-white">app.use</code>.</p>
             </div>
             <button
-              class="copybtn rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-logger">Copy</button>
+              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              type="button" data-copy="#api-logger" data-label="Copy">
+              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-copy"></use>
+              </svg>
+              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-check"></use>
+              </svg>
+              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-x"></use>
+              </svg>
+              <span class="copy-label" aria-live="polite">Copy</span>
+            </button>
           </div>
 
           <div class="mt-3 rounded-2xl border border-white/10 bg-black/30 p-4 text-xs text-white/65">
-            Formats: <code class="text-white">"dev"</code> (default) or <code class="text-white">"tiny"</code>.
+            Formats: <code class="text-white">"dev"</code> (default), <code class="text-white">"tiny"</code>, or <code
+              class="text-white">"json"</code>.
           </div>
 
           <pre
@@ -653,41 +921,132 @@ app.serve(3000);</code></pre>
               <div class="text-sm font-semibold">TypeScript typings</div>
               <p class="mt-2 text-sm text-white/65">
                 <code class="text-white">golt init</code> generates <code class="text-white">golt.d.ts</code> with
-                typings for <code class="text-white">Golt.App</code>, <code class="text-white">Golt.logger</code>, and
-                the HTTP <code class="text-white">Context</code> API (including schema inference for <code
-                  class="text-white">ValidateBody</code>).
+                typings for <code class="text-white">fetch()</code> and all <code class="text-white">Golt.*</code>
+                modules (HTTP, DB, FS, crypto/JWT, logging, env).
               </p>
             </div>
             <button
-              class="copybtn rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#qs-typings">Copy</button>
+              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              type="button" data-copy="#qs-typings" data-label="Copy">
+              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-copy"></use>
+              </svg>
+              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-check"></use>
+              </svg>
+              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-x"></use>
+              </svg>
+              <span class="copy-label" aria-live="polite">Copy</span>
+            </button>
           </div>
           <pre
-            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="qs-typings">declare namespace Golt {
+            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="qs-typings">declare interface FetchHeaders {
+  get(name: string): string | null;
+}
+
+declare interface FetchResponse {
+  ok: boolean;
+  status: number;
+  statusText: string;
+  headers: FetchHeaders;
+  text(): Promise&lt;string&gt;;
+  json&lt;T = any&gt;(): Promise&lt;T&gt;;
+}
+
+declare interface FetchOptions {
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  headers?: Record&lt;string, string&gt;;
+  body?: string;
+  timeout?: number;
+}
+
+declare function fetch(url: string, options?: FetchOptions): Promise&lt;FetchResponse&gt;;
+
+declare namespace Golt {
+  export const env: Record&lt;string, string | undefined&gt;;
+
   export type SchemaType = "string" | "number" | "boolean";
+
+  export type InferType&lt;T&gt; = T extends "string"
+    ? string
+    : T extends "number"
+    ? number
+    : T extends "boolean"
+    ? boolean
+    : never;
+
+  export type InferSchema&lt;T extends Record&lt;string, SchemaType&gt;&gt; = {
+    [K in keyof T]: InferType&lt;T[K]&gt;;
+  };
+
   export type Next = () =&gt; void;
   export type Middleware = (c: Context, next: Next) =&gt; void;
+
+  export interface LoggerConfig {
+    format?: "dev" | "tiny" | "json";
+  }
+
+  export type DbDialect = "sqlite" | "postgres" | "mysql" | "sqlserver";
+
+  export interface DatabaseClient {
+    query&lt;T = any&gt;(sql: string, ...args: any[]): Promise&lt;T[]&gt;;
+    close(): void;
+  }
+
+  export interface Database {
+    connect(dialect: DbDialect, connectionString: string): DatabaseClient;
+    query&lt;T = any&gt;(sql: string, ...args: any[]): Promise&lt;T[]&gt;;
+  }
 
   export interface Context {
     Method(): string;
     Url(): string;
     Param(name: string): string;
+    GetHeader(key: string): string;
+    SetHeader(key: string, value: string): void;
+    Set(key: string, value: any): void;
+    Get&lt;T = any&gt;(key: string): T | undefined;
+    Query(key: string): string;
     Status(code: number): Context;
     Send(body: string): void;
     Json(data: any): void;
     ValidateBody&lt;T extends Record&lt;string, SchemaType&gt;&gt;(schema: T): InferSchema&lt;T&gt; | null;
   }
 
+  export interface Fs {
+    readFile(path: string): string;
+    writeFile(path: string, content: string): void;
+  }
+
+  export interface Crypto {
+    hash(password: string, cost?: number): Promise&lt;string&gt;;
+    compare(password: string, hash: string): Promise&lt;boolean&gt;;
+  }
+
+  export interface Jwt {
+    sign(payload: Record&lt;string, any&gt;, secret: string, expHours?: number): string;
+    verify&lt;T = Record&lt;string, any&gt;&gt;(token: string, secret: string): T | null;
+  }
+
   export interface AppInstance {
     use(middleware: Middleware): AppInstance;
     get(path: string, handler: (c: Context) =&gt; void): AppInstance;
     post(path: string, handler: (c: Context) =&gt; void): AppInstance;
+    put(path: string, handler: (c: Context) =&gt; void): AppInstance;
+    delete(path: string, handler: (c: Context) =&gt; void): AppInstance;
+    static(prefix: string, dirPath: string, spa?: boolean): AppInstance;
     notFound(handler: (c: Context) =&gt; void): AppInstance;
     serve(port: number): void;
   }
 
   export function App(): AppInstance;
-  export function logger(config?: { format?: "dev" | "tiny" }): Middleware;
+  export const db: Database;
+  export const fs: Fs;
+  export const crypto: Crypto;
+  export const jwt: Jwt;
+
+  export function logger(config?: LoggerConfig): Middleware;
 }</code></pre>
         </div>
 
@@ -700,8 +1059,19 @@ app.serve(3000);</code></pre>
                 <p class="mt-2 text-sm text-white/65">Build from source (Windows example):</p>
               </div>
               <button
-                class="copybtn rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                type="button" data-copy="#qs-install">Copy</button>
+                class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                type="button" data-copy="#qs-install" data-label="Copy">
+                <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-copy"></use>
+                </svg>
+                <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-check"></use>
+                </svg>
+                <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-x"></use>
+                </svg>
+                <span class="copy-label" aria-live="polite">Copy</span>
+              </button>
             </div>
             <pre
               class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="qs-install">go build -o golt.exe .\cmd\golt</code></pre>
@@ -718,8 +1088,19 @@ app.serve(3000);</code></pre>
                 <p class="mt-2 text-sm text-white/65">Initialize and execute your first script:</p>
               </div>
               <button
-                class="copybtn rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                type="button" data-copy="#qs-run">Copy</button>
+                class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                type="button" data-copy="#qs-run" data-label="Copy">
+                <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-copy"></use>
+                </svg>
+                <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-check"></use>
+                </svg>
+                <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-x"></use>
+                </svg>
+                <span class="copy-label" aria-live="polite">Copy</span>
+              </button>
             </div>
             <pre
               class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="qs-run">golt init
@@ -727,6 +1108,7 @@ golt run .\app.ts</code></pre>
             <div class="mt-4 rounded-2xl border border-white/10 bg-black/30 p-4 text-xs text-white/65">
               Tip: <code class="text-white">golt init</code> creates <code class="text-white">golt.d.ts</code>, <code
                 class="text-white">tsconfig.json</code>, and <code class="text-white">app.ts</code>.
+              Watch mode: <code class="text-white">golt watch .\app.ts</code>.
             </div>
           </div>
         </div>
@@ -742,19 +1124,15 @@ golt run .\app.ts</code></pre>
               <a class="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 href="https://github.com/atrox39/golt#readme" rel="noreferrer">
                 <span>Open README</span>
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                    stroke-linejoin="round" />
+                <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-chevron-right"></use>
                 </svg>
               </a>
               <a class="inline-flex items-center justify-center gap-2 rounded-full bg-[#3B82F6] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_60px_rgba(59,130,246,.12)] transition hover:-translate-y-0.5 hover:bg-[#1E40AF] active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 href="https://github.com/atrox39/golt" rel="noreferrer">
                 <span>View on GitHub</span>
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M14 3h7v7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                  <path d="M21 3l-10 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-                  <path d="M10 7H7a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3" stroke="currentColor"
-                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#i-external"></use>
                 </svg>
               </a>
             </div>
@@ -781,10 +1159,20 @@ golt run .\app.ts</code></pre>
             </p>
           </div>
           <div class="flex flex-col gap-2 sm:flex-row">
-            <a class="inline-flex items-center justify-center rounded-full bg-[#FCD34D] px-5 py-3 text-sm font-semibold text-black transition hover:-translate-y-0.5 hover:bg-[#F59E0B] active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="#quickstart">Get started</a>
-            <a class="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="#features">Explore features</a>
+            <a class="inline-flex items-center justify-center gap-2 rounded-full bg-[#FCD34D] px-5 py-3 text-sm font-semibold text-black transition hover:-translate-y-0.5 hover:bg-[#F59E0B] active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              href="#quickstart">
+              <span>Get started</span>
+              <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-arrow-right"></use>
+              </svg>
+            </a>
+            <a class="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              href="#features">
+              <span>Explore features</span>
+              <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-chevron-right"></use>
+              </svg>
+            </a>
           </div>
         </div>
 
@@ -817,12 +1205,27 @@ golt run .\app.ts</code></pre>
           </p>
         </div>
         <div class="flex flex-wrap gap-2 text-sm">
-          <a class="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-white/85 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            href="https://github.com/atrox39/golt#readme" rel="noreferrer">README</a>
-          <a class="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-white/85 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            href="https://github.com/atrox39/golt" rel="noreferrer">GitHub</a>
-          <a class="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-white/85 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            href="#top">Back to top</a>
+          <a class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-white/85 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            href="https://github.com/atrox39/golt#readme" rel="noreferrer">
+            <svg class="h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+              <use href="#i-chevron-right"></use>
+            </svg>
+            <span>README</span>
+          </a>
+          <a class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-white/85 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            href="https://github.com/atrox39/golt" rel="noreferrer">
+            <svg class="h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+              <use href="#i-github"></use>
+            </svg>
+            <span>GitHub</span>
+          </a>
+          <a class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-white/85 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            href="#top">
+            <svg class="h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
+              <use href="#i-up"></use>
+            </svg>
+            <span>Back to top</span>
+          </a>
         </div>
       </div>
     </div>
@@ -858,8 +1261,21 @@ golt run .\app.ts</code></pre>
         });
       });
 
+      function setCopyVisual(btn, state, labelText) {
+        var label = btn.querySelector(".copy-label");
+        if (label) label.textContent = labelText;
+        var copyI = btn.querySelector(".icon-copy");
+        var okI = btn.querySelector(".icon-check");
+        var errI = btn.querySelector(".icon-x");
+        if (copyI) copyI.classList.toggle("hidden", state !== "idle");
+        if (okI) okI.classList.toggle("hidden", state !== "ok");
+        if (errI) errI.classList.toggle("hidden", state !== "err");
+      }
+
       var copyButtons = Array.prototype.slice.call(document.querySelectorAll("button.copybtn"));
       copyButtons.forEach(function (btn) {
+        var baseLabel = btn.getAttribute("data-label") || "Copy";
+        setCopyVisual(btn, "idle", baseLabel);
         btn.addEventListener("click", async function () {
           var sel = btn.getAttribute("data-copy");
           if (!sel) return;
@@ -868,13 +1284,11 @@ golt run .\app.ts</code></pre>
           var text = el.innerText;
           try {
             await navigator.clipboard.writeText(text);
-            var prev = btn.innerText;
-            btn.innerText = "Copied";
-            setTimeout(function () { btn.innerText = prev; }, 900);
+            setCopyVisual(btn, "ok", "Copied");
+            setTimeout(function () { setCopyVisual(btn, "idle", baseLabel); }, 900);
           } catch (e) {
-            var prev2 = btn.innerText;
-            btn.innerText = "Copy failed";
-            setTimeout(function () { btn.innerText = prev2; }, 900);
+            setCopyVisual(btn, "err", "Copy failed");
+            setTimeout(function () { setCopyVisual(btn, "idle", baseLabel); }, 900);
           }
         });
       });
