@@ -297,7 +297,7 @@ If you enable GitHub Pages, configure Pages to serve from the `docs/` folder.
 
 - Docs entry: `docs/index.html`
 - From this README: [Documentation Site](docs/index.html)
-- VS Code Extension: https://marketplace.visualstudio.com/items?itemName=Aztekode.golt-vscode
+- VS Code Extension: [Golt](https://marketplace.visualstudio.com/items?itemName=Aztekode.golt-vscode)
 
 ## Contributing
 
