@@ -1,3 +1,5 @@
+# <p align="center"><img src="docs/images/icon.jpg" alt="Golt icon" width="96" height="96" /></p>
+
 # Golt Runtime
 
 Golt is a lightweight TypeScript/JavaScript backend runtime written in Go. It bundles a TypeScript entry file (via esbuild) and executes it in a Go-based JS engine (goja + goja_nodejs event loop), with a small set of built-in globals focused on backend scripting.
