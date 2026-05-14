@@ -1,153 +1,130 @@
 <!doctype html>
-<html lang="en" class="golt-theme-dark">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="dark light" />
-  <meta name="theme-color" content="#050816" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#fff7df" />
 
-  <title>Golt — Go-native runtime for TypeScript</title>
-  <meta name="description" content="Golt is a lightweight TypeScript/JavaScript backend runtime written in Go. Bundle TypeScript with esbuild and run it inside a Go-based JavaScript engine with explicit backend APIs." />
+  <title>Golt — TypeScript runtime powered by Go</title>
+  <meta name="description" content="Golt is a lightweight Go-native runtime for TypeScript and JavaScript backend scripting. Bundle TS with esbuild and run it with explicit backend primitives." />
   <meta name="robots" content="index,follow" />
-
-  <meta property="og:title" content="Golt — Go-native runtime for TypeScript" />
-  <meta property="og:description" content="A small Go-native TypeScript runtime with HTTP, DB, FS, crypto, JWT, fetch, and VS Code typings." />
-  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Golt — TypeScript runtime powered by Go" />
+  <meta property="og:description" content="A small Go-native TypeScript runtime with HTTP, DB, FS, fetch, crypto and JWT." />
   <meta property="og:image" content="images/icon.jpg" />
+  <meta property="og:type" content="website" />
 
   <link rel="icon" type="image/jpeg" href="images/icon.jpg" />
   <link rel="apple-touch-icon" href="images/icon.jpg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css">
 
   <style>
     :root {
-      --bg: #050816;
-      --bg-soft: #080d1f;
-      --bg-card: rgba(13, 18, 38, 0.74);
-      --bg-card-solid: #0d1226;
-      --text: #f8fafc;
-      --muted: #9aa8c7;
-      --muted-2: #697799;
-      --line: rgba(148, 163, 184, 0.18);
-      --line-strong: rgba(252, 211, 77, 0.4);
-      --yellow: #fcd34d;
+      --paper: #fff7df;
+      --paper-2: #fff2c2;
+      --ink: #15120a;
+      --muted: #6f6757;
+      --soft: #fffaf0;
+      --card: rgba(255, 255, 255, .78);
+      --line: rgba(28, 22, 9, .12);
+      --line-strong: rgba(28, 22, 9, .22);
+      --yellow: #f7c948;
       --yellow-2: #f59e0b;
-      --blue: #3b82f6;
-      --blue-2: #60a5fa;
-      --green: #34d399;
-      --red: #fb7185;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.44);
-      --radius: 24px;
-      --radius-sm: 14px;
-      --sidebar: 288px;
-      --toc: 236px;
-      --header: 68px;
-      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --blue: #2563eb;
+      --blue-soft: #eaf1ff;
+      --green: #16a34a;
+      --pink: #ec4899;
+      --code: #111827;
+      --code-line: rgba(255,255,255,.08);
+      --radius: 22px;
+      --shadow: 0 24px 70px rgba(51, 37, 9, .12);
+      --font: "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --header: 70px;
     }
 
-    html.golt-theme-light {
-      --bg: #f6f8ff;
-      --bg-soft: #ffffff;
-      --bg-card: rgba(255, 255, 255, 0.78);
-      --bg-card-solid: #ffffff;
-      --text: #0f172a;
-      --muted: #475569;
-      --muted-2: #64748b;
-      --line: rgba(15, 23, 42, 0.12);
-      --line-strong: rgba(245, 158, 11, 0.5);
-      --shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+    [data-theme="dark"] {
+      --paper: #080806;
+      --paper-2: #15110a;
+      --ink: #fff8df;
+      --muted: #b6ad98;
+      --soft: #11100d;
+      --card: rgba(22, 19, 13, .78);
+      --line: rgba(255, 242, 194, .13);
+      --line-strong: rgba(255, 242, 194, .24);
+      --blue-soft: rgba(37,99,235,.16);
+      --shadow: 0 24px 70px rgba(0, 0, 0, .34);
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      scroll-padding-top: calc(var(--header) + 24px);
-    }
-
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header) + 20px); }
     body {
       margin: 0;
       min-height: 100vh;
+      color: var(--ink);
       background:
-        radial-gradient(900px 500px at 9% 5%, rgba(59, 130, 246, 0.26), transparent 60%),
-        radial-gradient(700px 440px at 92% 14%, rgba(252, 211, 77, 0.18), transparent 55%),
-        radial-gradient(900px 580px at 58% 100%, rgba(30, 64, 175, 0.16), transparent 60%),
-        var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      line-height: 1.65;
+        radial-gradient(1000px 520px at 10% -10%, rgba(247, 201, 72, .44), transparent 64%),
+        radial-gradient(760px 460px at 100% 8%, rgba(37, 99, 235, .14), transparent 62%),
+        linear-gradient(180deg, var(--paper), var(--soft) 54%, var(--paper));
+      font-family: var(--font);
+      line-height: 1.6;
+      overflow-x: hidden;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(28, 22, 9, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(28, 22, 9, .035) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: linear-gradient(to bottom, black, transparent 78%);
+      z-index: -1;
     }
 
-    button,
-    input {
-      font: inherit;
-    }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    code, pre { font-family: var(--mono); }
+    ::selection { background: var(--yellow); color: #121212; }
 
-    code,
-    pre {
-      font-family: var(--mono);
-    }
-
-    .skip-link {
+    .skip {
       position: absolute;
       left: -999px;
       top: 12px;
-      z-index: 1000;
-      padding: 10px 12px;
+      padding: 10px 14px;
       border: 1px solid var(--line);
-      border-radius: 12px;
-      background: var(--bg-card-solid);
-      color: var(--text);
+      border-radius: 999px;
+      background: var(--soft);
+      z-index: 100;
     }
-
-    .skip-link:focus {
-      left: 12px;
-    }
-
-    .noise {
-      pointer-events: none;
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      opacity: 0.18;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: radial-gradient(circle at 50% 0%, black, transparent 76%);
-    }
+    .skip:focus { left: 12px; }
 
     .topbar {
       position: sticky;
       top: 0;
       z-index: 50;
-      min-height: var(--header);
+      height: var(--header);
       border-bottom: 1px solid var(--line);
       backdrop-filter: blur(18px);
-      background: color-mix(in srgb, var(--bg) 84%, transparent);
+      background: color-mix(in srgb, var(--paper) 80%, transparent);
     }
 
     .topbar-inner {
+      max-width: 1240px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 22px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 12px 24px;
+      gap: 18px;
     }
 
     .brand {
@@ -156,17 +133,16 @@
       gap: 12px;
       min-width: 0;
       font-weight: 800;
-      letter-spacing: -0.03em;
+      letter-spacing: -.04em;
     }
-
     .brand img {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 14px;
-      box-shadow: 0 14px 40px rgba(252, 211, 77, 0.16);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 28px rgba(247, 201, 72, .22);
     }
-
-    .brand small {
+    .brand span span {
       display: block;
       margin-top: -4px;
       color: var(--muted);
@@ -175,334 +151,384 @@
       letter-spacing: 0;
     }
 
-    .top-actions {
+    .topnav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .topnav a {
+      padding: 9px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 650;
+    }
+    .topnav a:hover {
+      color: var(--ink);
+      background: rgba(247, 201, 72, .18);
+    }
+
+    .actions {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .pill {
+    .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      min-height: 38px;
-      padding: 8px 14px;
-      border: 1px solid var(--line);
+      min-height: 40px;
+      padding: 10px 15px;
+      border: 1px solid var(--line-strong);
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text);
+      background: rgba(255,255,255,.45);
+      color: var(--ink);
       font-size: 14px;
-      font-weight: 700;
-      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
-    }
-
-    .pill:hover {
-      transform: translateY(-1px);
-      border-color: var(--line-strong);
-      background: rgba(252, 211, 77, 0.08);
-    }
-
-    .pill-primary {
-      border-color: rgba(252, 211, 77, 0.8);
-      background: linear-gradient(135deg, var(--yellow), var(--yellow-2));
-      color: #111827;
-      box-shadow: 0 16px 36px rgba(252, 211, 77, 0.18);
-    }
-
-    .icon-button {
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text);
+      font-weight: 750;
       cursor: pointer;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: color-mix(in srgb, var(--yellow-2) 55%, var(--line-strong));
+      background: rgba(255,255,255,.72);
+    }
+    .btn-primary {
+      border-color: #1a1408;
+      background: #15120a;
+      color: #fff7df;
+      box-shadow: 0 14px 34px rgba(21, 18, 10, .22);
+    }
+    [data-theme="dark"] .btn-primary {
+      border-color: rgba(247,201,72,.75);
+      background: linear-gradient(135deg, var(--yellow), var(--yellow-2));
+      color: #15120a;
+    }
+    .icon-btn {
+      width: 40px;
+      padding: 0;
     }
 
-    .layout {
-      display: grid;
-      grid-template-columns: var(--sidebar) minmax(0, 1fr) var(--toc);
-      gap: 28px;
-      max-width: 1440px;
+    .shell {
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 24px;
-    }
-
-    .sidebar,
-    .toc {
-      position: sticky;
-      top: calc(var(--header) + 20px);
-      height: calc(100vh - var(--header) - 40px);
-      overflow: auto;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--bg-card);
-      box-shadow: var(--shadow);
-    }
-
-    .sidebar-title,
-    .toc-title {
-      margin: 4px 8px 10px;
-      color: var(--muted-2);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .search {
-      position: relative;
-      margin-bottom: 14px;
-    }
-
-    .search input {
-      width: 100%;
-      padding: 12px 12px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      outline: none;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text);
-    }
-
-    .search input:focus {
-      border-color: var(--line-strong);
-      box-shadow: 0 0 0 4px rgba(252, 211, 77, 0.12);
-    }
-
-    .nav-group {
-      margin: 14px 0;
-    }
-
-    .nav-heading {
-      margin: 0 8px 8px;
-      color: var(--muted-2);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .nav-link,
-    .toc a {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 9px 10px;
-      border-radius: 12px;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 650;
-      transition: color 160ms ease, background 160ms ease;
-    }
-
-    .nav-link:hover,
-    .nav-link.active,
-    .toc a:hover,
-    .toc a.active {
-      color: var(--text);
-      background: rgba(252, 211, 77, 0.1);
-    }
-
-    .main {
-      min-width: 0;
+      padding: 34px 22px 80px;
     }
 
     .hero {
       position: relative;
-      overflow: hidden;
-      padding: 42px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(420px, .95fr);
+      gap: 30px;
+      align-items: center;
+      padding: 34px 0 42px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 12px;
       border: 1px solid var(--line);
-      border-radius: 32px;
-      background:
-        linear-gradient(135deg, rgba(252, 211, 77, 0.10), transparent 42%),
-        linear-gradient(225deg, rgba(59, 130, 246, 0.18), transparent 48%),
-        var(--bg-card);
+      border-radius: 999px;
+      background: var(--card);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 760;
       box-shadow: var(--shadow);
     }
 
-    .hero::after {
-      content: "";
-      position: absolute;
-      right: -80px;
-      top: -80px;
-      width: 260px;
-      height: 260px;
-      border-radius: 999px;
-      background: rgba(252, 211, 77, 0.16);
-      filter: blur(34px);
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 11px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .bolt {
+    .spark {
       width: 18px;
       height: 18px;
       border-radius: 6px;
-      background: linear-gradient(135deg, var(--yellow), var(--blue));
-      box-shadow: 0 0 34px rgba(252, 211, 77, 0.45);
+      background:
+        linear-gradient(135deg, #15120a 0 45%, transparent 45%),
+        linear-gradient(135deg, var(--yellow), var(--yellow-2));
+      box-shadow: 0 0 0 4px rgba(247,201,72,.18);
     }
 
-    h1,
-    h2,
-    h3 {
-      line-height: 1.08;
-      letter-spacing: -0.045em;
-    }
-
+    h1, h2, h3 { line-height: 1.03; letter-spacing: -.055em; }
     h1 {
-      position: relative;
-      z-index: 1;
-      max-width: 780px;
-      margin: 24px 0 16px;
-      font-size: clamp(42px, 7vw, 82px);
-    }
-
-    h2 {
-      margin: 0 0 14px;
-      font-size: clamp(28px, 4vw, 44px);
-    }
-
-    h3 {
-      margin: 0 0 10px;
-      font-size: 23px;
-    }
-
-    .lead {
-      position: relative;
-      z-index: 1;
       max-width: 760px;
+      margin: 22px 0 18px;
+      font-size: clamp(48px, 7.6vw, 104px);
+      font-weight: 850;
+    }
+    h1 .accent {
+      color: transparent;
+      background: linear-gradient(90deg, var(--yellow-2), var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .lead {
+      max-width: 690px;
       margin: 0;
       color: var(--muted);
-      font-size: 18px;
+      font-size: clamp(17px, 2vw, 21px);
+      line-height: 1.6;
     }
 
-    .hero-actions {
-      position: relative;
-      z-index: 1;
+    .hero-cta {
       display: flex;
       flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       margin-top: 26px;
     }
 
-    .stats {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 30px;
-    }
-
-    .stat {
-      padding: 16px;
+    .mini {
+      padding: 15px;
       border: 1px solid var(--line);
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--card);
+      box-shadow: 0 14px 40px rgba(51, 37, 9, .07);
     }
-
-    .stat strong {
+    .mini strong {
       display: block;
-      color: var(--text);
-      font-size: 18px;
+      color: var(--ink);
+      font-size: 14px;
     }
-
-    .stat span {
+    .mini span {
       display: block;
-      margin-top: 4px;
-      color: var(--muted-2);
+      margin-top: 3px;
+      color: var(--muted);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 620;
     }
 
-    section.doc-section {
-      margin-top: 22px;
-      padding: 32px;
+    .terminal-card {
+      position: relative;
+      border: 1px solid rgba(21,18,10,.18);
+      border-radius: 28px;
+      background: #0d1117;
+      box-shadow: 0 30px 90px rgba(13, 17, 23, .28);
+      overflow: hidden;
+      transform: rotate(1deg);
+    }
+    .terminal-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(460px 180px at 20% 0%, rgba(247, 201, 72, .18), transparent),
+        radial-gradient(420px 180px at 80% 0%, rgba(37, 99, 235, .2), transparent);
+      pointer-events: none;
+    }
+    .terminal-head {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 15px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: #c9d1d9;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .dots { display: inline-flex; gap: 7px; }
+    .dots span {
+      width: 11px;
+      height: 11px;
+      border-radius: 99px;
+      background: #ff5f57;
+    }
+    .dots span:nth-child(2) { background: #ffbd2e; }
+    .dots span:nth-child(3) { background: #28c840; }
+
+    .tabs {
+      position: relative;
+      display: flex;
+      gap: 6px;
+      padding: 12px 14px 0;
+      overflow: auto;
+    }
+    .tab {
+      border: 1px solid rgba(255,255,255,.08);
+      border-bottom: none;
+      border-radius: 12px 12px 0 0;
+      background: rgba(255,255,255,.05);
+      color: #8b949e;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+    .tab.active {
+      background: #111827;
+      color: #fff7df;
+    }
+    .tab-panel { display: none; position: relative; }
+    .tab-panel.active { display: block; }
+
+    .codeblock {
+      position: relative;
+      margin: 0;
+      background: #111827;
+      overflow: auto;
+    }
+    .codeblock pre {
+      margin: 0;
+      padding: 20px;
+      background: transparent !important;
+      font-size: 13.5px;
+      line-height: 1.75;
+    }
+    .copy {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      color: #c9d1d9;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .copy:hover { color: white; background: rgba(255,255,255,.13); }
+
+    .section {
+      margin-top: 34px;
       border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--bg-card);
+      border-radius: 28px;
+      background: var(--card);
       box-shadow: var(--shadow);
+      overflow: hidden;
     }
-
-    .section-kicker {
-      margin-bottom: 10px;
-      color: var(--yellow);
+    .section-inner { padding: 34px; }
+    .section-label {
+      display: inline-flex;
+      margin-bottom: 11px;
+      color: var(--yellow-2);
       font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 0.12em;
+      font-weight: 850;
+      letter-spacing: .14em;
       text-transform: uppercase;
     }
-
+    h2 {
+      margin: 0;
+      font-size: clamp(32px, 4.5vw, 56px);
+      font-weight: 850;
+    }
+    .section p {
+      color: var(--muted);
+    }
     .section-lead {
-      max-width: 770px;
-      margin: 0 0 24px;
-      color: var(--muted);
+      max-width: 760px;
+      margin: 14px 0 0;
+      font-size: 17px;
     }
 
-    .grid {
+    .cards {
       display: grid;
-      gap: 16px;
-    }
-
-    .grid-2 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .grid-3 {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 26px;
     }
-
     .card {
-      padding: 20px;
+      position: relative;
+      padding: 22px;
       border: 1px solid var(--line);
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.045);
+      border-radius: 22px;
+      background: rgba(255,255,255,.44);
+      overflow: hidden;
     }
-
+    [data-theme="dark"] .card { background: rgba(255,255,255,.04); }
+    .card::after {
+      content: "";
+      position: absolute;
+      right: -34px;
+      top: -34px;
+      width: 92px;
+      height: 92px;
+      border-radius: 99px;
+      background: rgba(247,201,72,.16);
+    }
     .card h3 {
-      margin-bottom: 8px;
-      font-size: 18px;
+      position: relative;
+      z-index: 1;
+      margin: 0 0 8px;
+      font-size: 20px;
+      font-weight: 800;
     }
-
-    .card p,
-    .card li {
-      color: var(--muted);
+    .card p {
+      position: relative;
+      z-index: 1;
+      margin: 0;
       font-size: 14px;
     }
 
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 16px 0 0;
+    .doc-layout {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 22px;
+      margin-top: 34px;
+      align-items: start;
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
+    .side {
+      position: sticky;
+      top: calc(var(--header) + 20px);
       border: 1px solid var(--line);
-      border-radius: 999px;
+      border-radius: 24px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+    .side-title {
+      margin: 10px 10px 8px;
       color: var(--muted);
-      background: rgba(255, 255, 255, 0.04);
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 850;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .side a {
+      display: block;
+      padding: 9px 10px;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 660;
+    }
+    .side a:hover, .side a.active {
+      color: var(--ink);
+      background: rgba(247,201,72,.2);
+    }
+
+    .doc-card {
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .doc-card-body { padding: 30px; }
+    .doc-card h3 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      font-weight: 820;
+    }
+    .doc-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
     }
 
     .callout {
@@ -510,249 +536,93 @@
       grid-template-columns: auto 1fr;
       gap: 12px;
       padding: 16px;
-      border: 1px solid rgba(252, 211, 77, 0.26);
+      border: 1px solid rgba(37,99,235,.18);
       border-radius: 18px;
-      background: rgba(252, 211, 77, 0.08);
+      background: var(--blue-soft);
       color: var(--muted);
       font-size: 14px;
     }
+    .callout strong { color: var(--ink); }
 
-    .callout strong {
-      color: var(--text);
-    }
-
-    .steps {
-      counter-reset: step;
-      display: grid;
-      gap: 14px;
-    }
-
-    .step {
-      counter-increment: step;
-      display: grid;
-      grid-template-columns: 44px 1fr;
-      gap: 14px;
-      align-items: start;
-      padding: 18px;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .step::before {
-      content: counter(step);
-      display: grid;
-      place-items: center;
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--yellow), var(--blue));
-      color: #09111f;
-      font-weight: 900;
-    }
-
-    .step h3 {
-      font-size: 18px;
-      margin-bottom: 4px;
-    }
-
-    .step p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .code-card {
+    .table {
+      width: 100%;
+      border-collapse: collapse;
       overflow: hidden;
-      margin: 18px 0;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: #111827;
+      border-radius: 16px;
     }
-
-    .code-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 12px 10px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: rgba(15, 23, 42, 0.9);
-      color: #cbd5e1;
+    .table th, .table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    .table th {
+      color: var(--muted);
       font-size: 12px;
-      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
     }
-
-    .code-dots {
-      display: inline-flex;
-      gap: 6px;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-
-    .code-dots span {
-      display: block;
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: #fb7185;
-    }
-
-    .code-dots span:nth-child(2) { background: #fbbf24; }
-    .code-dots span:nth-child(3) { background: #34d399; }
-
-    .copy-code {
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      color: #e2e8f0;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .copy-code:hover {
-      border-color: rgba(252, 211, 77, 0.5);
-      color: white;
-    }
-
-    pre[class*="language-"] {
-      margin: 0;
-      padding: 18px;
-      border-radius: 0;
-      background: #0b1020;
-      font-size: 13px;
-      line-height: 1.65;
-      overflow: auto;
-    }
-
-    :not(pre) > code {
-      padding: 0.16em 0.38em;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.06);
-      color: color-mix(in srgb, var(--yellow) 78%, var(--text));
-      font-size: 0.9em;
+    .table td:first-child {
+      font-family: var(--mono);
+      font-weight: 650;
+      color: var(--yellow-2);
       white-space: nowrap;
     }
 
-    .api-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .api-item {
-      display: grid;
-      grid-template-columns: minmax(180px, 270px) 1fr;
-      gap: 16px;
-      padding: 16px;
+    :not(pre) > code {
+      padding: .15em .36em;
       border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      background: rgba(247, 201, 72, .14);
+      color: color-mix(in srgb, var(--yellow-2) 75%, var(--ink));
+      font-size: .9em;
+      white-space: nowrap;
     }
 
-    .api-item code {
-      color: var(--yellow);
-      font-weight: 700;
-    }
-
-    .api-item p {
-      margin: 0;
+    .footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 34px;
+      padding: 28px 0 0;
       color: var(--muted);
       font-size: 14px;
     }
 
-    .footer {
-      margin: 28px 0 10px;
-      padding: 24px 0;
-      color: var(--muted-2);
-      font-size: 13px;
-      text-align: center;
-    }
-
-    .mobile-nav-toggle {
-      display: none;
-    }
-
-    .toc {
-      font-size: 13px;
-    }
-
-    .toc a {
-      font-size: 13px;
-      padding: 8px 10px;
-    }
-
-    @media (max-width: 1180px) {
-      .layout {
-        grid-template-columns: var(--sidebar) minmax(0, 1fr);
-      }
-
-      .toc {
-        display: none;
-      }
-
-      .stats,
-      .grid-3 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 860px) {
-      .topbar-inner {
-        padding: 12px 16px;
-      }
-
-      .top-actions .hide-sm {
-        display: none;
-      }
-
-      .mobile-nav-toggle {
-        display: inline-grid;
-        place-items: center;
-      }
-
-      .layout {
-        grid-template-columns: 1fr;
-        padding: 16px;
-      }
-
-      .sidebar {
-        position: fixed;
-        inset: calc(var(--header) + 10px) 16px auto 16px;
-        z-index: 60;
-        height: min(72vh, 640px);
-        display: none;
-      }
-
-      body.nav-open .sidebar {
-        display: block;
-      }
-
+    @media (max-width: 1040px) {
       .hero {
-        padding: 28px;
-      }
-
-      .stats,
-      .grid-2,
-      .grid-3 {
         grid-template-columns: 1fr;
       }
-
-      .api-item {
+      .terminal-card {
+        transform: none;
+      }
+      .cards, .mini-grid {
         grid-template-columns: 1fr;
       }
-
-      section.doc-section {
-        padding: 24px;
+      .doc-layout {
+        grid-template-columns: 1fr;
       }
+      .side {
+        position: relative;
+        top: 0;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topnav { display: none; }
+      .actions .optional { display: none; }
+      .shell { padding-inline: 16px; }
+      h1 { font-size: clamp(42px, 14vw, 70px); }
+      .section-inner, .doc-card-body { padding: 22px; }
+      .hero { padding-top: 26px; }
+      .table { display: block; overflow-x: auto; }
+      .brand span span { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
+      *, *::before, *::after {
         scroll-behavior: auto !important;
         transition: none !important;
         animation: none !important;
@@ -762,113 +632,76 @@
 </head>
 
 <body>
-  <a class="skip-link" href="#content">Skip to content</a>
-  <div class="noise" aria-hidden="true"></div>
+  <a class="skip" href="#content">Skip to content</a>
 
   <header class="topbar">
     <div class="topbar-inner">
-      <a class="brand" href="#top" aria-label="Golt documentation home">
+      <a class="brand" href="#top" aria-label="Golt home">
         <img src="images/icon.jpg" alt="" role="presentation" />
-        <span>
-          Golt
-          <small>Go-native TypeScript runtime</small>
-        </span>
+        <span>Golt <span>TypeScript runtime powered by Go</span></span>
       </a>
 
-      <div class="top-actions">
-        <a class="pill hide-sm" href="https://github.com/atrox39/golt" rel="noreferrer">GitHub</a>
-        <a class="pill hide-sm" href="https://marketplace.visualstudio.com/items?itemName=Aztekode.golt-vscode" rel="noreferrer">VS Code Extension</a>
-        <button class="icon-button" id="themeToggle" type="button" aria-label="Toggle theme">☾</button>
-        <button class="icon-button mobile-nav-toggle" id="navToggle" type="button" aria-label="Open navigation">☰</button>
-        <a class="pill pill-primary" href="#quickstart">Get started</a>
+      <nav class="topnav" aria-label="Primary navigation">
+        <a href="#why">Why</a>
+        <a href="#quickstart">Quickstart</a>
+        <a href="#docs">Docs</a>
+        <a href="#api">API</a>
+      </nav>
+
+      <div class="actions">
+        <a class="btn optional" href="https://github.com/atrox39/golt" rel="noreferrer">GitHub</a>
+        <button class="btn icon-btn" id="themeToggle" type="button" aria-label="Toggle theme">☾</button>
+        <a class="btn btn-primary" href="#quickstart">Get started</a>
       </div>
     </div>
   </header>
 
-  <div class="layout">
-    <aside class="sidebar" id="sidebar" aria-label="Documentation navigation">
-      <div class="search">
-        <input id="navSearch" type="search" placeholder="Search docs..." aria-label="Search documentation navigation" />
-      </div>
-
-      <div class="nav-group" data-nav-group>
-        <div class="nav-heading">Start</div>
-        <a class="nav-link" href="#overview">Overview</a>
-        <a class="nav-link" href="#quickstart">Quickstart</a>
-        <a class="nav-link" href="#project-structure">Project structure</a>
-        <a class="nav-link" href="#vscode">VS Code typings</a>
-      </div>
-
-      <div class="nav-group" data-nav-group>
-        <div class="nav-heading">Runtime</div>
-        <a class="nav-link" href="#http">HTTP server</a>
-        <a class="nav-link" href="#database">Database</a>
-        <a class="nav-link" href="#fetch">Fetch</a>
-        <a class="nav-link" href="#filesystem">File system</a>
-        <a class="nav-link" href="#crypto">Crypto & JWT</a>
-        <a class="nav-link" href="#environment">Environment</a>
-      </div>
-
-      <div class="nav-group" data-nav-group>
-        <div class="nav-heading">Reference</div>
-        <a class="nav-link" href="#cli">CLI reference</a>
-        <a class="nav-link" href="#api">Runtime API</a>
-        <a class="nav-link" href="#roadmap">Roadmap</a>
-      </div>
-    </aside>
-
-    <main class="main" id="content">
-      <section class="hero" id="top">
-        <span class="eyebrow"><span class="bolt" aria-hidden="true"></span> Lightweight backend runtime</span>
-        <h1>Run TypeScript with Go-powered backend primitives.</h1>
+  <main class="shell" id="content">
+    <section class="hero" id="top">
+      <div>
+        <span class="hero-badge"><span class="spark" aria-hidden="true"></span> Lightweight backend runtime</span>
+        <h1>Write TypeScript. Run it <span class="accent">on Go.</span></h1>
         <p class="lead">
-          Golt bundles a TypeScript entry file with esbuild and executes it inside a Go-hosted JavaScript engine.
-          The runtime exposes a small, explicit API for HTTP, SQL, filesystem access, crypto, JWT, environment variables, logging, and outbound requests.
+          Golt bundles your TypeScript entry file with esbuild and executes it in a Go-hosted JavaScript engine.
+          It gives backend scripts a small, explicit runtime API: HTTP, DB, filesystem, fetch, crypto, JWT, env and logging.
         </p>
 
-        <div class="hero-actions">
-          <a class="pill pill-primary" href="#quickstart">Start in minutes</a>
-          <a class="pill" href="#api">Explore API</a>
-          <a class="pill" href="#database">See db.exec()</a>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#quickstart">Start in minutes</a>
+          <a class="btn" href="#docs">Read the docs</a>
+          <a class="btn" href="https://marketplace.visualstudio.com/items?itemName=Aztekode.golt-vscode" rel="noreferrer">VS Code extension</a>
         </div>
 
-        <div class="stats" aria-label="Golt highlights">
-          <div class="stat"><strong>TypeScript</strong><span>Write TS, run bundled JS</span></div>
-          <div class="stat"><strong>Go engine</strong><span>goja + event loop</span></div>
-          <div class="stat"><strong>HTTP + DB</strong><span>Built-in backend APIs</span></div>
-          <div class="stat"><strong>VS Code</strong><span>Extension-managed typings</span></div>
+        <div class="mini-grid" aria-label="Highlights">
+          <div class="mini"><strong>No Node runtime</strong><span>Explicit Golt APIs</span></div>
+          <div class="mini"><strong>Go-native engine</strong><span>goja + event loop</span></div>
+          <div class="mini"><strong>Clean scaffold</strong><span>app.ts + golt.json</span></div>
         </div>
-      </section>
+      </div>
 
-      <section class="doc-section" id="overview">
-        <div class="section-kicker">Overview</div>
-        <h2>What is Golt?</h2>
-        <p class="section-lead">
-          Golt is a small TypeScript/JavaScript backend runtime written in Go. It is not trying to clone Node.js.
-          Instead, it gives your scripts a deliberate set of backend APIs that are easy to reason about and evolve.
-        </p>
-
-        <div class="grid grid-3">
-          <article class="card">
-            <h3>Explicit runtime</h3>
-            <p>Only the APIs exposed by Golt are available globally. This keeps the runtime surface predictable.</p>
-          </article>
-          <article class="card">
-            <h3>Simple workflow</h3>
-            <p>Create a project, write <code>app.ts</code>, and run it through <code>golt run app.ts</code>.</p>
-          </article>
-          <article class="card">
-            <h3>Backend-focused</h3>
-            <p>HTTP routing, middleware, SQL, file IO, fetch, bcrypt, JWT, and logging are available from the runtime.</p>
-          </article>
+      <div class="terminal-card" aria-label="Code preview">
+        <div class="terminal-head">
+          <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>golt.dev</span>
+          <span>v1.0.1</span>
         </div>
 
-        <div class="code-card">
-          <div class="code-header">
-            <span><span class="code-dots"><span></span><span></span><span></span></span> app.ts</span>
-            <button class="copy-code" type="button">Copy</button>
-          </div>
-          <pre><code class="language-typescript">const app = Golt.App();
+        <div class="tabs" role="tablist" aria-label="Code samples">
+          <button class="tab active" data-tab="terminal" type="button">Terminal</button>
+          <button class="tab" data-tab="server" type="button">app.ts</button>
+          <button class="tab" data-tab="db" type="button">db.ts</button>
+        </div>
+
+        <div class="tab-panel active" data-panel="terminal">
+          <button class="copy" type="button">Copy</button>
+          <div class="codeblock"><pre><code class="language-bash">golt init my-api
+cd my-api
+code .
+golt run app.ts</code></pre></div>
+        </div>
+
+        <div class="tab-panel" data-panel="server">
+          <button class="copy" type="button">Copy</button>
+          <div class="codeblock"><pre><code class="language-typescript">const app = Golt.App();
 
 app.use(Golt.logger({ format: "dev" }));
 
@@ -879,128 +712,117 @@ app.get("/", (ctx) =&gt; {
   });
 });
 
-app.serve(3000);</code></pre>
+app.serve(3000);</code></pre></div>
         </div>
-      </section>
 
-      <section class="doc-section" id="quickstart">
-        <div class="section-kicker">Quickstart</div>
-        <h2>From zero to a running server.</h2>
+        <div class="tab-panel" data-panel="db">
+          <button class="copy" type="button">Copy</button>
+          <div class="codeblock"><pre><code class="language-typescript">const db = Golt.db.connect("sqlite", "./app.db");
+
+await db.exec(
+  "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)"
+);
+
+await db.exec("INSERT INTO users(name) VALUES (?)", "Ada");
+
+const users = await db.query("SELECT id, name FROM users");
+
+console.log(users);</code></pre></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="why">
+      <div class="section-inner">
+        <span class="section-label">Why Golt</span>
+        <h2>Small surface. Clear runtime. Backend-ready.</h2>
         <p class="section-lead">
-          The current scaffold is intentionally clean: the CLI creates the project files, while the VS Code extension manages editor typings when it detects <code>golt.json</code>.
+          Golt is designed for experiments, internal tools, small APIs and backend scripts where you want TypeScript ergonomics with Go-hosted runtime primitives.
         </p>
 
-        <div class="steps">
-          <div class="step">
-            <div>
-              <h3>Create a project</h3>
-              <p>Use the new project-style init command.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div>
-              <h3>Open it in VS Code</h3>
-              <p>The workspace recommendation points developers to the official Golt extension.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div>
-              <h3>Run the entry file</h3>
-              <p>Golt bundles and executes the TypeScript entry file.</p>
-            </div>
-          </div>
+        <div class="cards">
+          <article class="card">
+            <h3>Explicit by default</h3>
+            <p>Instead of mirroring all of Node.js, Golt exposes only the primitives it owns and documents.</p>
+          </article>
+          <article class="card">
+            <h3>Friendly DX</h3>
+            <p><code>golt init</code>, <code>golt run</code> and <code>golt watch</code> keep the workflow simple.</p>
+          </article>
+          <article class="card">
+            <h3>Real backend APIs</h3>
+            <p>HTTP routing, SQL access, filesystem helpers, bcrypt, JWT and fetch are available from the runtime.</p>
+          </article>
         </div>
+      </div>
+    </section>
 
-        <div class="code-card">
-          <div class="code-header">
-            <span><span class="code-dots"><span></span><span></span><span></span></span> Terminal</span>
-            <button class="copy-code" type="button">Copy</button>
+    <section class="section" id="quickstart">
+      <div class="section-inner">
+        <span class="section-label">Quickstart</span>
+        <h2>Create a project and run it.</h2>
+        <p class="section-lead">
+          The CLI creates the runtime project. The VS Code extension handles editor typings when it detects <code>golt.json</code>.
+        </p>
+
+        <div class="terminal-card" style="transform:none;margin-top:24px">
+          <div class="terminal-head">
+            <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>quickstart</span>
+            <span>bash</span>
           </div>
-          <pre><code class="language-bash">golt init my-api
+          <button class="copy" type="button">Copy</button>
+          <div class="codeblock"><pre><code class="language-bash">golt init my-api
 cd my-api
-code .
-golt run app.ts</code></pre>
-        </div>
-      </section>
-
-      <section class="doc-section" id="project-structure">
-        <div class="section-kicker">Project structure</div>
-        <h2>The scaffold Golt creates.</h2>
-        <p class="section-lead">
-          The CLI should generate only the files that belong to the runtime project. Editor-specific typings are delegated to the extension.
-        </p>
-
-        <div class="code-card">
-          <div class="code-header">
-            <span><span class="code-dots"><span></span><span></span><span></span></span> Generated files</span>
-            <button class="copy-code" type="button">Copy</button>
-          </div>
-          <pre><code class="language-treeview">my-api/
-├─ app.ts
-├─ golt.json
-└─ .vscode/
-   └─ extensions.json</code></pre>
+golt run app.ts</code></pre></div>
         </div>
 
-        <div class="grid grid-2">
+        <div class="cards">
+          <article class="card">
+            <h3><code>app.ts</code></h3>
+            <p>Your application entry file. It is bundled and executed by the runtime.</p>
+          </article>
           <article class="card">
             <h3><code>golt.json</code></h3>
-            <p>Project metadata and workspace marker used by the VS Code extension.</p>
-            <div class="code-card">
-              <div class="code-header"><span>golt.json</span><button class="copy-code" type="button">Copy</button></div>
-              <pre><code class="language-json">{
-  "name": "my-api",
-  "description": "A Golt Runtime project",
-  "version": "0.1.0"
-}</code></pre>
-            </div>
+            <p>Project metadata and workspace marker for the VS Code extension.</p>
           </article>
-
           <article class="card">
             <h3><code>.vscode/extensions.json</code></h3>
-            <p>Recommends the official editor extension without forcing it.</p>
-            <div class="code-card">
-              <div class="code-header"><span>extensions.json</span><button class="copy-code" type="button">Copy</button></div>
-              <pre><code class="language-json">{
-  "recommendations": [
-    "Aztekode.golt-vscode"
-  ]
-}</code></pre>
-            </div>
+            <p>Recommends <code>Aztekode.golt-vscode</code> for editor typings.</p>
           </article>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="doc-section" id="vscode">
-        <div class="section-kicker">Editor integration</div>
-        <h2>VS Code typings are extension-managed.</h2>
-        <p class="section-lead">
-          When the extension finds <code>golt.json</code>, it can generate the Golt typings under <code>.golt/types</code> and patch <code>tsconfig.json</code> or <code>jsconfig.json</code>. This keeps the CLI scaffold smaller and avoids coupling runtime releases to editor-only type updates.
-        </p>
+    <div class="doc-layout" id="docs">
+      <aside class="side" aria-label="Documentation sections">
+        <div class="side-title">Documentation</div>
+        <a href="#http">HTTP server</a>
+        <a href="#database">Database</a>
+        <a href="#fetch">Fetch</a>
+        <a href="#filesystem">File system</a>
+        <a href="#crypto">Crypto & JWT</a>
+        <a href="#cli">CLI</a>
+        <a href="#api">Runtime API</a>
+      </aside>
 
-        <div class="callout">
-          <span>⚡</span>
-          <div>
-            <strong>Recommended policy:</strong> changes that only affect TypeScript editor types should be released through <code>golt-vscode</code>. Runtime behavior should remain in the Go CLI/runtime.
-          </div>
-        </div>
-      </section>
+      <div>
+        <article class="doc-card" id="http">
+          <div class="doc-card-body">
+            <h3>HTTP server</h3>
+            <p>
+              <code>Golt.App()</code> creates a per-app HTTP server with routes, middleware, static files and a not-found handler.
+              Routes use Go-style path params like <code>/users/{id}</code>.
+            </p>
 
-      <section class="doc-section" id="http">
-        <div class="section-kicker">HTTP</div>
-        <h2>HTTP server with routes, middleware, static files, and safe finalization.</h2>
-        <p class="section-lead">
-          <code>Golt.App()</code> creates an HTTP app backed by Go's <code>net/http</code>. Routes use method-aware patterns like <code>GET /users/{id}</code>, and handlers receive a <code>Context</code> object.
-        </p>
+            <div class="terminal-card" style="transform:none">
+              <div class="terminal-head">
+                <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>http.ts</span>
+                <span>typescript</span>
+              </div>
+              <button class="copy" type="button">Copy</button>
+              <div class="codeblock"><pre><code class="language-typescript">const app = Golt.App();
 
-        <div class="code-card">
-          <div class="code-header">
-            <span><span class="code-dots"><span></span><span></span><span></span></span> HTTP example</span>
-            <button class="copy-code" type="button">Copy</button>
-          </div>
-          <pre><code class="language-typescript">const app = Golt.App();
-
-app.use(Golt.logger({ format: "dev" }));
+app.use(Golt.logger({ format: "tiny" }));
 
 app.get("/", (ctx) =&gt; {
   ctx.Send("Hello from Golt HTTP");
@@ -1014,352 +836,245 @@ app.post("/users", (ctx) =&gt; {
   const body = ctx.ValidateBody({ name: "string" });
   if (!body) return;
 
-  ctx.Status(201).Json({
-    ok: true,
-    name: body.name,
-  });
+  ctx.Status(201).Json({ ok: true, name: body.name });
 });
-
-app.static("/public", "./public", true);
 
 app.notFound((ctx) =&gt; {
   ctx.Status(404).Send("not found");
 });
 
-app.serve(3000);</code></pre>
-        </div>
+app.serve(3000);</code></pre></div>
+            </div>
 
-        <div class="badge-row">
-          <span class="badge">Routing</span>
-          <span class="badge">Middleware</span>
-          <span class="badge">Static files</span>
-          <span class="badge">404 handler</span>
-          <span class="badge">204 fallback</span>
-        </div>
-      </section>
-
-      <section class="doc-section" id="database">
-        <div class="section-kicker">Database</div>
-        <h2>Use <code>exec()</code> for writes and <code>query()</code> for rows.</h2>
-        <p class="section-lead">
-          Golt wraps Go's <code>database/sql</code>. The API separates commands that mutate state from commands that return rows.
-        </p>
-
-        <div class="grid grid-2">
-          <article class="card">
-            <h3><code>db.exec()</code></h3>
-            <p>Use for schema changes, inserts, updates, deletes, and other statements that do not return rows.</p>
-          </article>
-          <article class="card">
-            <h3><code>db.query()</code></h3>
-            <p>Use for SELECT statements and operations that return tabular results.</p>
-          </article>
-        </div>
-
-        <div class="code-card">
-          <div class="code-header">
-            <span><span class="code-dots"><span></span><span></span><span></span></span> SQLite example</span>
-            <button class="copy-code" type="button">Copy</button>
+            <div class="callout" style="margin-top:18px">
+              <span>⚡</span>
+              <div><strong>Runtime behavior:</strong> if a handler finishes without sending a response, Golt finalizes the request instead of leaving it hanging.</div>
+            </div>
           </div>
-          <pre><code class="language-typescript">const db = Golt.db.connect("sqlite", "./app.db");
+        </article>
 
-await db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
-  )
-`);
+        <article class="doc-card" id="database">
+          <div class="doc-card-body">
+            <h3>Database</h3>
+            <p>
+              Golt wraps Go <code>database/sql</code>. Use <code>db.exec()</code> for statements that do not return rows,
+              and <code>db.query()</code> for statements that return data.
+            </p>
 
-const insert = await db.exec(
+            <table class="table">
+              <thead>
+                <tr><th>Method</th><th>Use it for</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>db.exec()</td><td><code>CREATE</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, schema changes and writes.</td></tr>
+                <tr><td>db.query()</td><td><code>SELECT</code> and SQL statements that return rows.</td></tr>
+              </tbody>
+            </table>
+
+            <div class="terminal-card" style="transform:none;margin-top:18px">
+              <div class="terminal-head">
+                <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>database.ts</span>
+                <span>typescript</span>
+              </div>
+              <button class="copy" type="button">Copy</button>
+              <div class="codeblock"><pre><code class="language-typescript">const db = Golt.db.connect("sqlite", "./app.db");
+
+const result = await db.exec(
   "INSERT INTO users(name) VALUES (?)",
   "Ada"
 );
 
-console.log("Insert result:", insert);
+console.log(result.rowsAffected);
 
 const users = await db.query&lt;{ id: number; name: string }&gt;(
   "SELECT id, name FROM users"
-);
-
-console.log(users);
-
-db.close();</code></pre>
-        </div>
-      </section>
-
-      <section class="doc-section" id="fetch">
-        <div class="section-kicker">Outbound HTTP</div>
-        <h2>Minimal global <code>fetch()</code>.</h2>
-        <p class="section-lead">
-          Golt exposes a small <code>fetch()</code> implementation powered by Go's <code>net/http</code>. It supports method, headers, body, timeout, and response helpers.
-        </p>
-
-        <div class="code-card">
-          <div class="code-header">
-            <span><span class="code-dots"><span></span><span></span><span></span></span> Fetch example</span>
-            <button class="copy-code" type="button">Copy</button>
+);</code></pre></div>
+            </div>
           </div>
-          <pre><code class="language-typescript">const response = await fetch("https://httpbin.org/json", {
+        </article>
+
+        <article class="doc-card" id="fetch">
+          <div class="doc-card-body">
+            <h3>Fetch</h3>
+            <p>
+              Golt provides a minimal global <code>fetch()</code> powered by Go <code>net/http</code>. It supports method, headers, body and timeout.
+            </p>
+            <div class="terminal-card" style="transform:none">
+              <div class="terminal-head">
+                <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>fetch.ts</span>
+                <span>typescript</span>
+              </div>
+              <button class="copy" type="button">Copy</button>
+              <div class="codeblock"><pre><code class="language-typescript">const res = await fetch("https://httpbin.org/json", {
   method: "GET",
   timeout: 15000,
 });
 
-if (!response.ok) {
-  console.log("Request failed:", response.status);
+if (!res.ok) {
+  console.log("Request failed:", res.status);
 }
 
-const data = await response.json();
-console.log(data);</code></pre>
-        </div>
-      </section>
-
-      <section class="doc-section" id="filesystem">
-        <div class="section-kicker">File system</div>
-        <h2>Simple read/write helpers.</h2>
-        <p class="section-lead">
-          <code>Golt.fs</code> currently provides synchronous helpers for small file operations.
-        </p>
-
-        <div class="code-card">
-          <div class="code-header">
-            <span><span class="code-dots"><span></span><span></span><span></span></span> File system example</span>
-            <button class="copy-code" type="button">Copy</button>
+const data = await res.json();
+console.log(data);</code></pre></div>
+            </div>
           </div>
-          <pre><code class="language-typescript">Golt.fs.writeFile("./hello.txt", "Hello from Golt\n");
+        </article>
 
-const content = Golt.fs.readFile("./hello.txt");
+        <article class="doc-card" id="filesystem">
+          <div class="doc-card-body">
+            <h3>File system</h3>
+            <p><code>Golt.fs</code> exposes simple helpers for small read/write operations.</p>
+            <div class="terminal-card" style="transform:none">
+              <div class="terminal-head">
+                <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>fs.ts</span>
+                <span>typescript</span>
+              </div>
+              <button class="copy" type="button">Copy</button>
+              <div class="codeblock"><pre><code class="language-typescript">Golt.fs.writeFile("./hello.txt", "Hello from Golt\n");
 
-console.log(content);</code></pre>
-        </div>
-      </section>
+const text = Golt.fs.readFile("./hello.txt");
 
-      <section class="doc-section" id="crypto">
-        <div class="section-kicker">Security helpers</div>
-        <h2>Password hashing and JWT helpers.</h2>
-        <p class="section-lead">
-          <code>Golt.crypto</code> provides bcrypt hashing and comparison. <code>Golt.jwt</code> provides HS256 token signing and verification.
-        </p>
-
-        <div class="code-card">
-          <div class="code-header">
-            <span><span class="code-dots"><span></span><span></span><span></span></span> Crypto + JWT</span>
-            <button class="copy-code" type="button">Copy</button>
+console.log(text);</code></pre></div>
+            </div>
           </div>
-          <pre><code class="language-typescript">const hash = await Golt.crypto.hash("password123");
-const isValid = await Golt.crypto.compare("password123", hash);
+        </article>
 
-console.log("Password match:", isValid);
+        <article class="doc-card" id="crypto">
+          <div class="doc-card-body">
+            <h3>Crypto & JWT</h3>
+            <p><code>Golt.crypto</code> provides bcrypt hashing. <code>Golt.jwt</code> signs and verifies HS256 tokens.</p>
+            <div class="terminal-card" style="transform:none">
+              <div class="terminal-head">
+                <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>auth.ts</span>
+                <span>typescript</span>
+              </div>
+              <button class="copy" type="button">Copy</button>
+              <div class="codeblock"><pre><code class="language-typescript">const hash = await Golt.crypto.hash("password123");
+const ok = await Golt.crypto.compare("password123", hash);
 
 const token = Golt.jwt.sign({ sub: "user_123" }, "secret", 24);
 const payload = Golt.jwt.verify(token, "secret");
 
-console.log(payload);</code></pre>
-        </div>
-      </section>
-
-      <section class="doc-section" id="environment">
-        <div class="section-kicker">Environment</div>
-        <h2>Access host environment variables.</h2>
-        <p class="section-lead">
-          <code>Golt.env</code> exposes a map of environment variables from the host process.
-        </p>
-
-        <div class="code-card">
-          <div class="code-header">
-            <span><span class="code-dots"><span></span><span></span><span></span></span> Environment variables</span>
-            <button class="copy-code" type="button">Copy</button>
+console.log({ ok, payload });</code></pre></div>
+            </div>
           </div>
-          <pre><code class="language-typescript">console.log("PATH =", Golt.env["PATH"]);
-console.log("NODE_ENV =", Golt.env["NODE_ENV"]);</code></pre>
-        </div>
-      </section>
+        </article>
 
-      <section class="doc-section" id="cli">
-        <div class="section-kicker">CLI reference</div>
-        <h2>Commands.</h2>
-        <p class="section-lead">
-          The CLI keeps the workflow focused: create a project, run an entry file, or restart on changes.
-        </p>
+        <article class="doc-card" id="cli">
+          <div class="doc-card-body">
+            <h3>CLI</h3>
+            <p>The CLI keeps Golt focused on three actions: initialize, run and watch.</p>
 
-        <div class="api-list">
-          <div class="api-item">
-            <code>golt init &lt;project-name&gt;</code>
-            <p>Creates a new project folder with <code>app.ts</code>, <code>golt.json</code>, and <code>.vscode/extensions.json</code>.</p>
+            <table class="table">
+              <thead>
+                <tr><th>Command</th><th>Description</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>golt init &lt;name&gt;</td><td>Create a new project folder with <code>app.ts</code>, <code>golt.json</code> and VS Code recommendations.</td></tr>
+                <tr><td>golt run &lt;file.ts&gt;</td><td>Bundle and execute a TypeScript entry file.</td></tr>
+                <tr><td>golt watch &lt;file.ts&gt;</td><td>Run and restart on TypeScript or JavaScript file changes.</td></tr>
+              </tbody>
+            </table>
           </div>
-          <div class="api-item">
-            <code>golt run &lt;filename.ts&gt;</code>
-            <p>Bundles the entry file with esbuild and runs it in the Golt runtime.</p>
+        </article>
+
+        <article class="doc-card" id="api">
+          <div class="doc-card-body">
+            <h3>Runtime API</h3>
+            <p>This is the current small, explicit API surface exposed by Golt.</p>
+
+            <table class="table">
+              <thead>
+                <tr><th>Primitive</th><th>Purpose</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>console.log</td><td>Print JS values to stdout.</td></tr>
+                <tr><td>Golt.App</td><td>Create an HTTP app with routing, middleware and server start.</td></tr>
+                <tr><td>Golt.logger</td><td>Create logging middleware for <code>app.use()</code>.</td></tr>
+                <tr><td>Golt.db</td><td>Connect to SQL databases and run <code>query()</code> / <code>exec()</code>.</td></tr>
+                <tr><td>Golt.fs</td><td>Read and write local files.</td></tr>
+                <tr><td>Golt.crypto</td><td>Hash and compare passwords with bcrypt.</td></tr>
+                <tr><td>Golt.jwt</td><td>Sign and verify JWT tokens.</td></tr>
+                <tr><td>Golt.env</td><td>Access host environment variables.</td></tr>
+                <tr><td>fetch</td><td>Make outbound HTTP requests.</td></tr>
+              </tbody>
+            </table>
           </div>
-          <div class="api-item">
-            <code>golt watch &lt;filename.ts&gt;</code>
-            <p>Runs the entry file and restarts on TypeScript/JavaScript changes.</p>
-          </div>
-        </div>
-      </section>
+        </article>
+      </div>
+    </div>
 
-      <section class="doc-section" id="api">
-        <div class="section-kicker">Runtime API</div>
-        <h2>Current API surface.</h2>
-        <p class="section-lead">
-          These are the runtime primitives currently documented by Golt.
-        </p>
+    <footer class="footer">
+      <span>Golt Runtime documentation.</span>
+      <span>Made for GitHub Pages.</span>
+    </footer>
+  </main>
 
-        <div class="api-list">
-          <div class="api-item"><code>console.log(...args)</code><p>Prints exported JS values to stdout.</p></div>
-          <div class="api-item"><code>Golt.App()</code><p>Creates an HTTP app with routes, middleware, static files, and server start.</p></div>
-          <div class="api-item"><code>Golt.logger(config?)</code><p>Creates HTTP logging middleware. Formats: <code>dev</code>, <code>tiny</code>, <code>json</code>.</p></div>
-          <div class="api-item"><code>Golt.db.connect(dialect, dsn)</code><p>Connects to sqlite, postgres, mysql, or sqlserver.</p></div>
-          <div class="api-item"><code>db.exec(sql, ...args)</code><p>Executes non-row SQL statements and returns metadata.</p></div>
-          <div class="api-item"><code>db.query(sql, ...args)</code><p>Executes SQL queries that return rows.</p></div>
-          <div class="api-item"><code>fetch(url, options?)</code><p>Performs outbound HTTP requests.</p></div>
-          <div class="api-item"><code>Golt.fs</code><p>Reads and writes files.</p></div>
-          <div class="api-item"><code>Golt.crypto</code><p>Hashes and compares passwords using bcrypt.</p></div>
-          <div class="api-item"><code>Golt.jwt</code><p>Signs and verifies HS256 JWT tokens.</p></div>
-          <div class="api-item"><code>Golt.env</code><p>Reads environment variables from the host process.</p></div>
-        </div>
-      </section>
-
-      <section class="doc-section" id="roadmap">
-        <div class="section-kicker">Roadmap</div>
-        <h2>What should come next?</h2>
-        <p class="section-lead">
-          Since HTTP finalization, <code>db.exec()</code>, and the improved init workflow are already in place, the next practical milestone is test coverage and CLI polish that does not force a VS Code extension release.
-        </p>
-
-        <div class="grid grid-2">
-          <article class="card">
-            <h3>Near-term</h3>
-            <ul>
-              <li>Tests for HTTP request finalization.</li>
-              <li>Tests for <code>db.query()</code> and <code>db.exec()</code>.</li>
-              <li>Tests for <code>fetch()</code> success and error paths.</li>
-              <li>Recursive <code>watch</code> behavior.</li>
-            </ul>
-          </article>
-
-          <article class="card">
-            <h3>Later</h3>
-            <ul>
-              <li><code>Golt.env.get("KEY", fallback)</code>.</li>
-              <li><code>ctx.Body()</code> / <code>ctx.JsonBody()</code>.</li>
-              <li><code>fetch()</code> JSON helpers.</li>
-              <li>Better source maps and original TypeScript line reporting.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <footer class="footer">
-        Golt Runtime documentation. Built as a static GitHub Pages-ready document.
-      </footer>
-    </main>
-
-    <aside class="toc" aria-label="On this page">
-      <div class="toc-title">On this page</div>
-      <a href="#overview">Overview</a>
-      <a href="#quickstart">Quickstart</a>
-      <a href="#http">HTTP</a>
-      <a href="#database">Database</a>
-      <a href="#cli">CLI</a>
-      <a href="#api">API</a>
-      <a href="#roadmap">Roadmap</a>
-    </aside>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-bash.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-typescript.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/languages/typescript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/languages/bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/languages/json.min.js"></script>
   <script>
     (() => {
-      const html = document.documentElement;
-      const themeToggle = document.getElementById("themeToggle");
-      const savedTheme = localStorage.getItem("golt-theme");
+      document.querySelectorAll("pre code").forEach((block) => hljs.highlightElement(block));
 
-      if (savedTheme === "light") {
-        html.classList.remove("golt-theme-dark");
-        html.classList.add("golt-theme-light");
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+      const savedTheme = localStorage.getItem("golt-doc-theme");
+      if (savedTheme === "dark") {
+        root.dataset.theme = "dark";
         themeToggle.textContent = "☀";
       }
 
       themeToggle.addEventListener("click", () => {
-        const isLight = html.classList.toggle("golt-theme-light");
-        html.classList.toggle("golt-theme-dark", !isLight);
-        localStorage.setItem("golt-theme", isLight ? "light" : "dark");
-        themeToggle.textContent = isLight ? "☀" : "☾";
+        const isDark = root.dataset.theme === "dark";
+        if (isDark) {
+          root.removeAttribute("data-theme");
+          themeToggle.textContent = "☾";
+          localStorage.setItem("golt-doc-theme", "light");
+        } else {
+          root.dataset.theme = "dark";
+          themeToggle.textContent = "☀";
+          localStorage.setItem("golt-doc-theme", "dark");
+        }
       });
 
-      const navToggle = document.getElementById("navToggle");
-      navToggle.addEventListener("click", () => {
-        document.body.classList.toggle("nav-open");
-      });
-
-      document.querySelectorAll(".nav-link, .toc a").forEach((link) => {
-        link.addEventListener("click", () => {
-          document.body.classList.remove("nav-open");
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const target = tab.dataset.tab;
+          const card = tab.closest(".terminal-card");
+          card.querySelectorAll(".tab").forEach((el) => el.classList.toggle("active", el === tab));
+          card.querySelectorAll(".tab-panel").forEach((panel) => {
+            panel.classList.toggle("active", panel.dataset.panel === target);
+          });
         });
       });
 
-      document.querySelectorAll(".copy-code").forEach((button) => {
+      document.querySelectorAll(".copy").forEach((button) => {
         button.addEventListener("click", async () => {
-          const card = button.closest(".code-card");
-          const code = card?.querySelector("code")?.innerText ?? "";
-
+          const panel = button.closest(".tab-panel") || button.closest(".terminal-card");
+          const code = panel.querySelector("code")?.innerText || "";
+          const original = button.textContent;
           try {
             await navigator.clipboard.writeText(code);
-            const original = button.textContent;
             button.textContent = "Copied";
-            setTimeout(() => (button.textContent = original), 1200);
           } catch {
             button.textContent = "Failed";
-            setTimeout(() => (button.textContent = "Copy"), 1200);
           }
+          setTimeout(() => button.textContent = original, 1200);
         });
       });
 
-      const links = Array.from(document.querySelectorAll(".nav-link, .toc a"));
-      const sections = links
-        .map((link) => document.querySelector(link.getAttribute("href")))
-        .filter(Boolean);
-
+      const sideLinks = Array.from(document.querySelectorAll(".side a"));
+      const sections = sideLinks.map((link) => document.querySelector(link.getAttribute("href"))).filter(Boolean);
       const observer = new IntersectionObserver((entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
+        const visible = entries.filter((entry) => entry.isIntersecting)[0];
         if (!visible) return;
-
-        links.forEach((link) => {
-          link.classList.toggle(
-            "active",
-            link.getAttribute("href") === `#${visible.target.id}`
-          );
+        sideLinks.forEach((link) => {
+          link.classList.toggle("active", link.getAttribute("href") === "#" + visible.target.id);
         });
-      }, {
-        rootMargin: "-18% 0px -68% 0px",
-        threshold: [0.1, 0.2, 0.35]
-      });
-
+      }, { rootMargin: "-20% 0px -70% 0px", threshold: 0.1 });
       sections.forEach((section) => observer.observe(section));
-
-      const search = document.getElementById("navSearch");
-      const navGroups = Array.from(document.querySelectorAll("[data-nav-group]"));
-
-      search.addEventListener("input", () => {
-        const q = search.value.trim().toLowerCase();
-
-        navGroups.forEach((group) => {
-          let visibleCount = 0;
-
-          group.querySelectorAll(".nav-link").forEach((link) => {
-            const matches = link.textContent.toLowerCase().includes(q);
-            link.style.display = matches ? "" : "none";
-            if (matches) visibleCount += 1;
-          });
-
-          group.style.display = visibleCount > 0 ? "" : "none";
-        });
-      });
     })();
   </script>
 </body>
