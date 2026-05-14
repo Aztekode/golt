@@ -644,6 +644,7 @@
       <nav class="topnav" aria-label="Primary navigation">
         <a href="#why">Why</a>
         <a href="#quickstart">Quickstart</a>
+        <a href="#docker">Docker</a>
         <a href="#docs">Docs</a>
         <a href="#api">API</a>
       </nav>
@@ -669,13 +670,14 @@
         <div class="hero-cta">
           <a class="btn btn-primary" href="#quickstart">Start in minutes</a>
           <a class="btn" href="#docs">Read the docs</a>
+          <a class="btn" href="#docker">Run with Docker</a>
           <a class="btn" href="https://marketplace.visualstudio.com/items?itemName=Aztekode.golt-vscode" rel="noreferrer">VS Code extension</a>
         </div>
 
         <div class="mini-grid" aria-label="Highlights">
           <div class="mini"><strong>No Node runtime</strong><span>Explicit Golt APIs</span></div>
           <div class="mini"><strong>Go-native engine</strong><span>goja + event loop</span></div>
-          <div class="mini"><strong>Clean scaffold</strong><span>app.ts + golt.json</span></div>
+          <div class="mini"><strong>Docker-ready</strong><span>aztekode/golt:1.0.1</span></div>
         </div>
       </div>
 
@@ -689,6 +691,7 @@
           <button class="tab active" data-tab="terminal" type="button">Terminal</button>
           <button class="tab" data-tab="server" type="button">app.ts</button>
           <button class="tab" data-tab="db" type="button">db.ts</button>
+          <button class="tab" data-tab="docker" type="button">Docker</button>
         </div>
 
         <div class="tab-panel active" data-panel="terminal">
@@ -728,6 +731,18 @@ await db.exec("INSERT INTO users(name) VALUES (?)", "Ada");
 const users = await db.query("SELECT id, name FROM users");
 
 console.log(users);</code></pre></div>
+        </div>
+
+        <div class="tab-panel" data-panel="docker">
+          <button class="copy" type="button">Copy</button>
+          <div class="codeblock"><pre><code class="language-bash">docker pull aztekode/golt:1.0.1
+
+docker run --rm \
+  -p 3000:3000 \
+  -v "$PWD":/workspace \
+  -w /workspace \
+  aztekode/golt:1.0.1 \
+  run app.ts</code></pre></div>
         </div>
       </div>
     </section>
@@ -793,9 +808,87 @@ golt run app.ts</code></pre></div>
       </div>
     </section>
 
+    <section class="section" id="docker">
+      <div class="section-inner">
+        <span class="section-label">Docker</span>
+        <h2>Run Golt anywhere with the official image.</h2>
+        <p class="section-lead">
+          Golt is available as a Docker image through <code>aztekode/golt</code>. Use it to run a local project without installing the runtime on the host, or as a base image for deployable Golt applications.
+        </p>
+
+        <div class="cards">
+          <article class="card">
+            <h3>Official image</h3>
+            <p>Pull <code>aztekode/golt:latest</code> or pin a specific version like <code>aztekode/golt:1.0.1</code>.</p>
+          </article>
+          <article class="card">
+            <h3>Local projects</h3>
+            <p>Mount your current folder into <code>/workspace</code> and run <code>golt run app.ts</code> inside the container.</p>
+          </article>
+          <article class="card">
+            <h3>Production base</h3>
+            <p>Use the image as a base for your own Golt app Dockerfile and expose your application port.</p>
+          </article>
+        </div>
+
+        <div class="terminal-card" style="transform:none;margin-top:24px">
+          <div class="terminal-head">
+            <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>run with Docker</span>
+            <span>bash</span>
+          </div>
+          <button class="copy" type="button">Copy</button>
+          <div class="codeblock"><pre><code class="language-bash">docker run --rm \
+  -p 3000:3000 \
+  -v "$PWD":/workspace \
+  -w /workspace \
+  aztekode/golt:1.0.1 \
+  run app.ts</code></pre></div>
+        </div>
+
+        <div class="terminal-card" style="transform:none;margin-top:18px">
+          <div class="terminal-head">
+            <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>PowerShell</span>
+            <span>windows</span>
+          </div>
+          <button class="copy" type="button">Copy</button>
+          <div class="codeblock"><pre><code class="language-powershell">docker run --rm `
+  -p 3000:3000 `
+  -v "${PWD}:/workspace" `
+  -w /workspace `
+  aztekode/golt:1.0.1 `
+  run app.ts</code></pre></div>
+        </div>
+
+        <div class="terminal-card" style="transform:none;margin-top:18px">
+          <div class="terminal-head">
+            <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>Dockerfile</span>
+            <span>base image</span>
+          </div>
+          <button class="copy" type="button">Copy</button>
+          <div class="codeblock"><pre><code class="language-dockerfile">FROM aztekode/golt:1.0.1
+
+WORKDIR /app
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["run", "app.ts"]</code></pre></div>
+        </div>
+
+        <div class="callout" style="margin-top:18px">
+          <span>🐳</span>
+          <div>
+            <strong>Recommended production usage:</strong> pin the version with <code>aztekode/golt:1.0.1</code> instead of relying only on <code>latest</code>.
+          </div>
+        </div>
+      </div>
+    </section>
+
     <div class="doc-layout" id="docs">
       <aside class="side" aria-label="Documentation sections">
         <div class="side-title">Documentation</div>
+        <a href="#docker">Docker</a>
         <a href="#http">HTTP server</a>
         <a href="#database">Database</a>
         <a href="#fetch">Fetch</a>
@@ -973,6 +1066,7 @@ console.log({ ok, payload });</code></pre></div>
                 <tr><td>golt init &lt;name&gt;</td><td>Create a new project folder with <code>app.ts</code>, <code>golt.json</code> and VS Code recommendations.</td></tr>
                 <tr><td>golt run &lt;file.ts&gt;</td><td>Bundle and execute a TypeScript entry file.</td></tr>
                 <tr><td>golt watch &lt;file.ts&gt;</td><td>Run and restart on TypeScript or JavaScript file changes.</td></tr>
+                <tr><td>docker run aztekode/golt</td><td>Run Golt from the official Docker image without installing the runtime locally.</td></tr>
               </tbody>
             </table>
           </div>
@@ -1014,6 +1108,8 @@ console.log({ ok, payload });</code></pre></div>
   <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/languages/typescript.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/languages/bash.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/languages/json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/languages/powershell.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/languages/dockerfile.min.js"></script>
   <script>
     (() => {
       document.querySelectorAll("pre code").forEach((block) => hljs.highlightElement(block));
