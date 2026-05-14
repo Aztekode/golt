@@ -25,7 +25,8 @@ func InitDB(vm *goja.Runtime, e *GoltEngine) {
 				panic("Database not connected. Call Golt.db.connect() first.")
 			}
 
-			querySql := call.Argument(0).String()
+			querySQL := call.Argument(0).String()
+
 			var params []any
 			for i := 1; i < len(call.Arguments); i++ {
 				params = append(params, call.Argument(i).Export())
@@ -34,47 +35,116 @@ func InitDB(vm *goja.Runtime, e *GoltEngine) {
 			promise, resolve, reject := vm.NewPromise()
 
 			go func() {
-				rows, err := db.Query(querySql, params...)
+				rows, err := db.Query(querySQL, params...)
 				if err != nil {
-					e.loop.RunOnLoop(func(r *goja.Runtime) { reject(vm.ToValue(err)) })
+					e.loop.RunOnLoop(func(r *goja.Runtime) {
+						reject(vm.ToValue(err.Error()))
+					})
 					return
 				}
 				defer rows.Close()
 
 				columns, err := rows.Columns()
 				if err != nil {
-					e.loop.RunOnLoop(func(r *goja.Runtime) { reject(vm.ToValue(err)) })
+					e.loop.RunOnLoop(func(r *goja.Runtime) {
+						reject(vm.ToValue(err.Error()))
+					})
 					return
 				}
 
 				count := len(columns)
-				var results []map[string]any
+				results := make([]map[string]any, 0)
 
 				for rows.Next() {
 					values := make([]any, count)
 					valuePtrs := make([]any, count)
+
 					for i := 0; i < count; i++ {
 						valuePtrs[i] = &values[i]
 					}
 
 					if err := rows.Scan(valuePtrs...); err != nil {
-						e.loop.RunOnLoop(func(r *goja.Runtime) { reject(vm.ToValue(err)) })
+						e.loop.RunOnLoop(func(r *goja.Runtime) {
+							reject(vm.ToValue(err.Error()))
+						})
 						return
 					}
 
 					rowMap := make(map[string]any)
+
 					for i, col := range columns {
 						val := values[i]
+
 						if b, ok := val.([]byte); ok {
 							rowMap[col] = string(b)
 						} else {
 							rowMap[col] = val
 						}
 					}
+
 					results = append(results, rowMap)
 				}
 
-				e.loop.RunOnLoop(func(r *goja.Runtime) { resolve(results) })
+				if err := rows.Err(); err != nil {
+					e.loop.RunOnLoop(func(r *goja.Runtime) {
+						reject(vm.ToValue(err.Error()))
+					})
+					return
+				}
+
+				e.loop.RunOnLoop(func(r *goja.Runtime) {
+					resolve(results)
+				})
+			}()
+
+			return vm.ToValue(promise)
+		}
+	}
+
+	createExecFunc := func(getDB func() *sql.DB) func(goja.FunctionCall) goja.Value {
+		return func(call goja.FunctionCall) goja.Value {
+			db := getDB()
+			if db == nil {
+				panic("Database not connected. Call Golt.db.connect() first.")
+			}
+
+			execSQL := call.Argument(0).String()
+
+			var params []any
+			for i := 1; i < len(call.Arguments); i++ {
+				params = append(params, call.Argument(i).Export())
+			}
+
+			promise, resolve, reject := vm.NewPromise()
+
+			go func() {
+				result, err := db.Exec(execSQL, params...)
+				if err != nil {
+					e.loop.RunOnLoop(func(r *goja.Runtime) {
+						reject(vm.ToValue(err.Error()))
+					})
+					return
+				}
+
+				rowsAffected, rowsErr := result.RowsAffected()
+				lastInsertID, idErr := result.LastInsertId()
+
+				response := map[string]any{
+					"rowsAffected": nil,
+					"lastInsertId": nil,
+				}
+
+				if rowsErr == nil {
+					response["rowsAffected"] = rowsAffected
+				}
+
+				if idErr == nil {
+					response["lastInsertId"] = lastInsertID
+				}
+
+				e.loop.RunOnLoop(func(r *goja.Runtime) {
+					resolve(response)
+				})
 			}()
 
 			return vm.ToValue(promise)
@@ -98,21 +168,41 @@ func InitDB(vm *goja.Runtime, e *GoltEngine) {
 		db.SetMaxIdleConns(25)
 
 		activeDB = db
+
 		fmt.Printf("[Golt] * Connected to %s\n", dialect)
 
 		clientObj := vm.NewObject()
 
-		clientObj.Set("query", createQueryFunc(func() *sql.DB { return db }))
+		clientObj.Set("query", createQueryFunc(func() *sql.DB {
+			return db
+		}))
+
+		clientObj.Set("exec", createExecFunc(func() *sql.DB {
+			return db
+		}))
 
 		clientObj.Set("close", func(call goja.FunctionCall) goja.Value {
-			db.Close()
+			if err := db.Close(); err != nil {
+				panic(fmt.Sprintf("Error closing database: %v", err))
+			}
+
+			if activeDB == db {
+				activeDB = nil
+			}
+
 			return goja.Undefined()
 		})
 
 		return clientObj
 	})
 
-	dbObj.Set("query", createQueryFunc(func() *sql.DB { return activeDB }))
+	dbObj.Set("query", createQueryFunc(func() *sql.DB {
+		return activeDB
+	}))
+
+	dbObj.Set("exec", createExecFunc(func() *sql.DB {
+		return activeDB
+	}))
 
 	goltObj.Set("db", dbObj)
 }

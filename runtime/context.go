@@ -8,18 +8,70 @@ import (
 )
 
 type HttpContext struct {
-	w      http.ResponseWriter
-	r      *http.Request
-	status int
-	done   chan struct{}
-	locals map[string]any
-	mu     sync.Once
+	w         http.ResponseWriter
+	r         *http.Request
+	status    int
+	done      chan struct{}
+	locals    map[string]any
+	mu        sync.Once
+	writeMu   sync.Mutex
+	responded bool
+}
+
+func NewHttpContext(w http.ResponseWriter, r *http.Request) *HttpContext {
+	return &HttpContext{
+		w:      w,
+		r:      r,
+		done:   make(chan struct{}),
+		locals: make(map[string]any),
+	}
 }
 
 func (c *HttpContext) finish() {
 	c.mu.Do(func() {
 		close(c.done)
 	})
+}
+
+func (c *HttpContext) IsDone() bool {
+	select {
+	case <-c.done:
+		return true
+	default:
+		return false
+	}
+}
+
+func (c *HttpContext) HasResponded() bool {
+	c.writeMu.Lock()
+	defer c.writeMu.Unlock()
+
+	return c.responded
+}
+
+func (c *HttpContext) markResponded() bool {
+	c.writeMu.Lock()
+	defer c.writeMu.Unlock()
+
+	if c.responded {
+		return false
+	}
+
+	c.responded = true
+	return true
+}
+
+func (c *HttpContext) AutoNoContent() {
+	if !c.markResponded() {
+		return
+	}
+
+	if c.status == 0 {
+		c.status = http.StatusNoContent
+	}
+
+	c.w.WriteHeader(c.status)
+	c.finish()
 }
 
 func (c *HttpContext) Method() string { return c.r.Method }
@@ -55,26 +107,38 @@ func (c *HttpContext) Status(code int) *HttpContext {
 }
 
 func (c *HttpContext) Send(body string) {
+	if !c.markResponded() {
+		return
+	}
+
 	if c.status == 0 {
 		c.status = http.StatusOK
 	}
+
 	c.w.WriteHeader(c.status)
 	c.w.Write([]byte(body))
 	c.finish()
 }
 
 func (c *HttpContext) Json(data interface{}) {
+	if !c.markResponded() {
+		return
+	}
+
 	if c.status == 0 {
 		c.status = http.StatusOK
 	}
+
 	c.w.Header().Set("Content-Type", "application/json")
 	c.w.WriteHeader(c.status)
 
 	bytes, err := json.Marshal(data)
 	if err != nil {
 		c.w.Write([]byte(`{ "error": "Internal server error" }`))
+		c.finish()
 		return
 	}
+
 	c.w.Write(bytes)
 	c.finish()
 }
@@ -99,6 +163,7 @@ func (c *HttpContext) ValidateBody(schema map[string]interface{}) interface{} {
 	}
 
 	errors := make(map[string]string)
+
 	for key, expectedType := range schema {
 		val, exists := data[key]
 		if !exists {

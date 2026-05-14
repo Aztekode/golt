@@ -1,20 +1,17 @@
 <!doctype html>
-<html lang="en" class="scroll-smooth motion-reduce:scroll-auto">
-
+<html lang="en" class="golt-theme-dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark light" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#050816" />
 
-  <title>Golt — Go + Volt runtime for TypeScript</title>
-  <meta name="description"
-    content="Golt is a lightweight TypeScript/JavaScript runtime written in Go. Bundle your TS entry with esbuild and run it in a Go-based engine with a small, explicit API surface." />
+  <title>Golt — Go-native runtime for TypeScript</title>
+  <meta name="description" content="Golt is a lightweight TypeScript/JavaScript backend runtime written in Go. Bundle TypeScript with esbuild and run it inside a Go-based JavaScript engine with explicit backend APIs." />
   <meta name="robots" content="index,follow" />
 
-  <meta property="og:title" content="Golt — Go + Volt runtime for TypeScript" />
-  <meta property="og:description"
-    content="A Go-based runtime for TypeScript/JavaScript: bundle with esbuild, execute with a small native API surface." />
+  <meta property="og:title" content="Golt — Go-native runtime for TypeScript" />
+  <meta property="og:description" content="A small Go-native TypeScript runtime with HTTP, DB, FS, crypto, JWT, fetch, and VS Code typings." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="images/icon.jpg" />
 
@@ -23,1357 +20,1347 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.min.css" />
 
   <style>
     :root {
-      --golt-yellow: #FCD34D;
-      --golt-yellow-2: #F59E0B;
-      --golt-blue: #3B82F6;
-      --golt-blue-2: #1E40AF;
-      --golt-black: #000000;
-      --golt-slate: #1F2937;
+      --bg: #050816;
+      --bg-soft: #080d1f;
+      --bg-card: rgba(13, 18, 38, 0.74);
+      --bg-card-solid: #0d1226;
+      --text: #f8fafc;
+      --muted: #9aa8c7;
+      --muted-2: #697799;
+      --line: rgba(148, 163, 184, 0.18);
+      --line-strong: rgba(252, 211, 77, 0.4);
+      --yellow: #fcd34d;
+      --yellow-2: #f59e0b;
+      --blue: #3b82f6;
+      --blue-2: #60a5fa;
+      --green: #34d399;
+      --red: #fb7185;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.44);
+      --radius: 24px;
+      --radius-sm: 14px;
+      --sidebar: 288px;
+      --toc: 236px;
+      --header: 68px;
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    html.golt-theme-light {
+      --bg: #f6f8ff;
+      --bg-soft: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.78);
+      --bg-card-solid: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --muted-2: #64748b;
+      --line: rgba(15, 23, 42, 0.12);
+      --line-strong: rgba(245, 158, 11, 0.5);
+      --shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--header) + 24px);
     }
 
     body {
-      font-family: Sora, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(900px 500px at 9% 5%, rgba(59, 130, 246, 0.26), transparent 60%),
+        radial-gradient(700px 440px at 92% 14%, rgba(252, 211, 77, 0.18), transparent 55%),
+        radial-gradient(900px 580px at 58% 100%, rgba(30, 64, 175, 0.16), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.65;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
     }
 
     code,
     pre {
-      font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-family: var(--mono);
     }
 
-    @keyframes drift {
-      0% {
-        transform: translate3d(0, 0, 0);
-        opacity: .75;
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: 12px;
+      z-index: 1000;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--bg-card-solid);
+      color: var(--text);
+    }
+
+    .skip-link:focus {
+      left: 12px;
+    }
+
+    .noise {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at 50% 0%, black, transparent 76%);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      min-height: var(--header);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+      background: color-mix(in srgb, var(--bg) 84%, transparent);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 12px 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      box-shadow: 0 14px 40px rgba(252, 211, 77, 0.16);
+    }
+
+    .brand small {
+      display: block;
+      margin-top: -4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .pill:hover {
+      transform: translateY(-1px);
+      border-color: var(--line-strong);
+      background: rgba(252, 211, 77, 0.08);
+    }
+
+    .pill-primary {
+      border-color: rgba(252, 211, 77, 0.8);
+      background: linear-gradient(135deg, var(--yellow), var(--yellow-2));
+      color: #111827;
+      box-shadow: 0 16px 36px rgba(252, 211, 77, 0.18);
+    }
+
+    .icon-button {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: var(--sidebar) minmax(0, 1fr) var(--toc);
+      gap: 28px;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .sidebar,
+    .toc {
+      position: sticky;
+      top: calc(var(--header) + 20px);
+      height: calc(100vh - var(--header) - 40px);
+      overflow: auto;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar-title,
+    .toc-title {
+      margin: 4px 8px 10px;
+      color: var(--muted-2);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .search {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 12px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    .search input:focus {
+      border-color: var(--line-strong);
+      box-shadow: 0 0 0 4px rgba(252, 211, 77, 0.12);
+    }
+
+    .nav-group {
+      margin: 14px 0;
+    }
+
+    .nav-heading {
+      margin: 0 8px 8px;
+      color: var(--muted-2);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-link,
+    .toc a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 650;
+      transition: color 160ms ease, background 160ms ease;
+    }
+
+    .nav-link:hover,
+    .nav-link.active,
+    .toc a:hover,
+    .toc a.active {
+      color: var(--text);
+      background: rgba(252, 211, 77, 0.1);
+    }
+
+    .main {
+      min-width: 0;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 42px;
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      background:
+        linear-gradient(135deg, rgba(252, 211, 77, 0.10), transparent 42%),
+        linear-gradient(225deg, rgba(59, 130, 246, 0.18), transparent 48%),
+        var(--bg-card);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: rgba(252, 211, 77, 0.16);
+      filter: blur(34px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .bolt {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--yellow), var(--blue));
+      box-shadow: 0 0 34px rgba(252, 211, 77, 0.45);
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.08;
+      letter-spacing: -0.045em;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 24px 0 16px;
+      font-size: clamp(42px, 7vw, 82px);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: clamp(28px, 4vw, 44px);
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 23px;
+    }
+
+    .lead {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .stats {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .stat {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted-2);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    section.doc-section {
+      margin-top: 22px;
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      box-shadow: var(--shadow);
+    }
+
+    .section-kicker {
+      margin-bottom: 10px;
+      color: var(--yellow);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .section-lead {
+      max-width: 770px;
+      margin: 0 0 24px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .card h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .card p,
+    .card li {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .callout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid rgba(252, 211, 77, 0.26);
+      border-radius: 18px;
+      background: rgba(252, 211, 77, 0.08);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .steps {
+      counter-reset: step;
+      display: grid;
+      gap: 14px;
+    }
+
+    .step {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .step::before {
+      content: counter(step);
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--yellow), var(--blue));
+      color: #09111f;
+      font-weight: 900;
+    }
+
+    .step h3 {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .code-card {
+      overflow: hidden;
+      margin: 18px 0;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #111827;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px 10px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(15, 23, 42, 0.9);
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .code-dots {
+      display: inline-flex;
+      gap: 6px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .code-dots span {
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #fb7185;
+    }
+
+    .code-dots span:nth-child(2) { background: #fbbf24; }
+    .code-dots span:nth-child(3) { background: #34d399; }
+
+    .copy-code {
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: #e2e8f0;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .copy-code:hover {
+      border-color: rgba(252, 211, 77, 0.5);
+      color: white;
+    }
+
+    pre[class*="language-"] {
+      margin: 0;
+      padding: 18px;
+      border-radius: 0;
+      background: #0b1020;
+      font-size: 13px;
+      line-height: 1.65;
+      overflow: auto;
+    }
+
+    :not(pre) > code {
+      padding: 0.16em 0.38em;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: color-mix(in srgb, var(--yellow) 78%, var(--text));
+      font-size: 0.9em;
+      white-space: nowrap;
+    }
+
+    .api-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .api-item {
+      display: grid;
+      grid-template-columns: minmax(180px, 270px) 1fr;
+      gap: 16px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .api-item code {
+      color: var(--yellow);
+      font-weight: 700;
+    }
+
+    .api-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer {
+      margin: 28px 0 10px;
+      padding: 24px 0;
+      color: var(--muted-2);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .mobile-nav-toggle {
+      display: none;
+    }
+
+    .toc {
+      font-size: 13px;
+    }
+
+    .toc a {
+      font-size: 13px;
+      padding: 8px 10px;
+    }
+
+    @media (max-width: 1180px) {
+      .layout {
+        grid-template-columns: var(--sidebar) minmax(0, 1fr);
       }
 
-      50% {
-        transform: translate3d(-10px, 8px, 0);
-        opacity: .92;
+      .toc {
+        display: none;
       }
 
-      100% {
-        transform: translate3d(0, 0, 0);
-        opacity: .75;
+      .stats,
+      .grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
-    @keyframes sweep {
-      0% {
-        transform: translate3d(-30%, 0, 0);
-        opacity: .0;
+    @media (max-width: 860px) {
+      .topbar-inner {
+        padding: 12px 16px;
       }
 
-      12% {
-        opacity: .55;
+      .top-actions .hide-sm {
+        display: none;
       }
 
-      55% {
-        opacity: .25;
+      .mobile-nav-toggle {
+        display: inline-grid;
+        place-items: center;
       }
 
-      100% {
-        transform: translate3d(30%, 0, 0);
-        opacity: 0;
+      .layout {
+        grid-template-columns: 1fr;
+        padding: 16px;
       }
-    }
 
-    .golt-drift {
-      animation: drift 10s ease-in-out infinite;
-    }
+      .sidebar {
+        position: fixed;
+        inset: calc(var(--header) + 10px) 16px auto 16px;
+        z-index: 60;
+        height: min(72vh, 640px);
+        display: none;
+      }
 
-    .golt-sweep {
-      animation: sweep 6.5s ease-in-out infinite;
+      body.nav-open .sidebar {
+        display: block;
+      }
+
+      .hero {
+        padding: 28px;
+      }
+
+      .stats,
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .api-item {
+        grid-template-columns: 1fr;
+      }
+
+      section.doc-section {
+        padding: 24px;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
-
-      .golt-drift,
-      .golt-sweep {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
         animation: none !important;
       }
     }
   </style>
 </head>
 
-<body class="min-h-dvh bg-black text-white antialiased">
-  <a class="absolute left-[-999px] top-auto h-px w-px overflow-hidden rounded-xl border border-white/15 bg-[#111827] px-3 py-2 text-sm text-white focus:left-4 focus:top-4 focus:h-auto focus:w-auto focus:z-[9999] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-    href="#content">Skip to content</a>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+  <div class="noise" aria-hidden="true"></div>
 
-  <svg class="hidden" aria-hidden="true" width="0" height="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <symbol id="i-bolt" viewBox="0 0 24 24">
-      <path d="M13 2L3 14h7l-1 8 12-14h-7l-1-6z" fill="none" stroke="currentColor" stroke-width="1.8"
-        stroke-linejoin="round" />
-    </symbol>
-    <symbol id="i-menu" viewBox="0 0 24 24">
-      <path d="M5 7h14M5 12h14M5 17h14" fill="none" stroke="currentColor" stroke-width="1.8"
-        stroke-linecap="round" />
-    </symbol>
-    <symbol id="i-arrow-right" viewBox="0 0 24 24">
-      <path d="M5 12h12m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"
-        stroke-linecap="round" stroke-linejoin="round" />
-    </symbol>
-    <symbol id="i-chevron-right" viewBox="0 0 24 24">
-      <path d="M9 18l6-6-6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-        stroke-linejoin="round" />
-    </symbol>
-    <symbol id="i-external" viewBox="0 0 24 24">
-      <path d="M14 3h7v7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-      <path d="M21 3l-10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-      <path d="M10 7H7a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3" fill="none"
-        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-    </symbol>
-    <symbol id="i-copy" viewBox="0 0 24 24">
-      <path d="M9 9h10v10H9z" fill="none" stroke="currentColor" stroke-width="1.8" />
-      <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" fill="none"
-        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-    </symbol>
-    <symbol id="i-check" viewBox="0 0 24 24">
-      <path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-        stroke-linejoin="round" />
-    </symbol>
-    <symbol id="i-x" viewBox="0 0 24 24">
-      <path d="M7 7l10 10M17 7 7 17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-    </symbol>
-    <symbol id="i-github" viewBox="0 0 24 24">
-      <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-        d="M9 19c-4 1.5-4-2-6-2m12 4v-3.5c0-1 .1-1.4-.5-2 2-.2 4-1 4-4.5 0-1-.3-2-.9-2.8.1-.2.4-1.4-.1-2.7 0 0-1-.3-3 .9-.9-.3-1.9-.4-2.9-.4s-2 .1-2.9.4c-2-1.2-3-.9-3-.9-.5 1.3-.2 2.5-.1 2.7C5.3 6.5 5 7.5 5 8.5c0 3.5 2 4.3 4 4.5-.4.4-.6.9-.6 1.7V21" />
-    </symbol>
-    <symbol id="i-up" viewBox="0 0 24 24">
-      <path d="M12 5v14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-      <path d="M7 10l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-        stroke-linejoin="round" />
-    </symbol>
-  </svg>
-
-  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-    <div class="absolute inset-0 opacity-70" style="background:
-        radial-gradient(1100px 700px at 18% 10%, rgba(59, 130, 246, .22), transparent 55%),
-        radial-gradient(900px 620px at 82% 18%, rgba(252, 211, 77, .18), transparent 55%),
-        radial-gradient(1000px 780px at 52% 92%, rgba(30, 64, 175, .16), transparent 55%);">
-    </div>
-    <div class="absolute inset-0 opacity-[.18]" style="background-image:
-        linear-gradient(rgba(59,130,246,.28) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59,130,246,.16) 1px, transparent 1px);
-        background-size: 56px 56px, 56px 56px;
-        background-position: -1px -1px, -1px -1px;">
-    </div>
-    <div class="golt-sweep absolute -left-1/2 top-16 h-[220px] w-[200%] opacity-40 blur-2xl"
-      style="background: linear-gradient(90deg, transparent, rgba(252,211,77,.22), rgba(59,130,246,.18), transparent);">
-    </div>
-  </div>
-
-  <header class="sticky top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur">
-    <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
-      <a class="group inline-flex min-w-0 items-center gap-3 rounded-xl px-2 py-1 transition hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-        href="#top" aria-label="Golt home">
-        <span
-          class="grid h-10 w-10 place-items-center overflow-hidden rounded-xl border border-white/15 bg-black shadow-[0_18px_60px_rgba(0,0,0,.55)]">
-          <img src="images/icon.jpg" alt="" role="presentation" class="h-10 w-10 object-cover" />
-        </span>
-        <span class="min-w-0">
-          <span class="block truncate text-sm font-semibold tracking-tight">Golt</span>
-          <span class="block truncate text-xs text-white/60">Go + Volt runtime for TypeScript</span>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#top" aria-label="Golt documentation home">
+        <img src="images/icon.jpg" alt="" role="presentation" />
+        <span>
+          Golt
+          <small>Go-native TypeScript runtime</small>
         </span>
       </a>
 
-      <nav class="hidden items-center gap-1.5 text-sm text-white/70 md:flex" aria-label="Primary">
-        <a class="navlink rounded-xl px-3 py-2 transition hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          href="#features">Features</a>
-        <a class="navlink rounded-xl px-3 py-2 transition hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          href="#how">How it works</a>
-        <a class="navlink rounded-xl px-3 py-2 transition hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          href="#api">API</a>
-        <a class="navlink rounded-xl px-3 py-2 transition hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          href="#quickstart">Quickstart</a>
-      </nav>
-
-      <div class="flex items-center gap-2.5">
-        <a class="hidden items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none sm:inline-flex focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          href="https://github.com/atrox39/golt" rel="noreferrer">
-          <svg class="h-4 w-4 text-white/90" viewBox="0 0 24 24" aria-hidden="true">
-            <use href="#i-github"></use>
-          </svg>
-          <span>GitHub</span>
-        </a>
-        <a class="inline-flex items-center gap-2 rounded-full bg-[#FCD34D] px-4 py-2 text-sm font-semibold text-black shadow-[0_18px_60px_rgba(252,211,77,.12)] transition hover:-translate-y-0.5 hover:bg-[#F59E0B] active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          href="#quickstart">
-          <span>Get started</span>
-          <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-            <use href="#i-arrow-right"></use>
-          </svg>
-        </a>
-
-        <button
-          class="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-3 py-2 text-sm text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none md:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          id="menuBtn" type="button" aria-controls="mobileMenu" aria-expanded="false">
-          <span class="sr-only">Open menu</span>
-          <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-            <use href="#i-menu"></use>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="md:hidden">
-      <div class="hidden border-t border-white/10 bg-black/80 backdrop-blur" id="mobileMenu">
-        <div class="mx-auto max-w-6xl px-4 py-3">
-          <div class="grid gap-1">
-            <a class="navlink rounded-xl px-3 py-2 text-sm text-white/85 transition hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="#features">Features</a>
-            <a class="navlink rounded-xl px-3 py-2 text-sm text-white/85 transition hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="#how">How it works</a>
-            <a class="navlink rounded-xl px-3 py-2 text-sm text-white/85 transition hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="#api">API</a>
-            <a class="navlink rounded-xl px-3 py-2 text-sm text-white/85 transition hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="#quickstart">Quickstart</a>
-            <a class="rounded-xl px-3 py-2 text-sm text-white/85 underline decoration-white/20 underline-offset-4 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="https://github.com/atrox39/golt" rel="noreferrer">GitHub</a>
-            <a class="rounded-xl px-3 py-2 text-sm text-white/85 underline decoration-white/20 underline-offset-4 transition hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="https://github.com/atrox39/golt#readme" rel="noreferrer">README</a>
-          </div>
-        </div>
+      <div class="top-actions">
+        <a class="pill hide-sm" href="https://github.com/atrox39/golt" rel="noreferrer">GitHub</a>
+        <a class="pill hide-sm" href="https://marketplace.visualstudio.com/items?itemName=Aztekode.golt-vscode" rel="noreferrer">VS Code Extension</a>
+        <button class="icon-button" id="themeToggle" type="button" aria-label="Toggle theme">☾</button>
+        <button class="icon-button mobile-nav-toggle" id="navToggle" type="button" aria-label="Open navigation">☰</button>
+        <a class="pill pill-primary" href="#quickstart">Get started</a>
       </div>
     </div>
   </header>
 
-  <main id="content">
-    <section class="mx-auto max-w-6xl px-4 pt-10 sm:pt-14" id="top">
-      <div class="grid gap-8 lg:grid-cols-12 lg:items-center">
-        <div class="lg:col-span-7">
-          <div data-reveal
-            class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-sm text-white/80 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-            <span class="grid h-6 w-6 place-items-center rounded-full bg-[#1E40AF]/40">
-              <svg class="h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-bolt"></use>
-              </svg>
-            </span>
-            <span class="font-semibold text-white">Go + Volt</span>
-            <span class="text-white/50">A Go-native way to run TypeScript</span>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar" aria-label="Documentation navigation">
+      <div class="search">
+        <input id="navSearch" type="search" placeholder="Search docs..." aria-label="Search documentation navigation" />
+      </div>
+
+      <div class="nav-group" data-nav-group>
+        <div class="nav-heading">Start</div>
+        <a class="nav-link" href="#overview">Overview</a>
+        <a class="nav-link" href="#quickstart">Quickstart</a>
+        <a class="nav-link" href="#project-structure">Project structure</a>
+        <a class="nav-link" href="#vscode">VS Code typings</a>
+      </div>
+
+      <div class="nav-group" data-nav-group>
+        <div class="nav-heading">Runtime</div>
+        <a class="nav-link" href="#http">HTTP server</a>
+        <a class="nav-link" href="#database">Database</a>
+        <a class="nav-link" href="#fetch">Fetch</a>
+        <a class="nav-link" href="#filesystem">File system</a>
+        <a class="nav-link" href="#crypto">Crypto & JWT</a>
+        <a class="nav-link" href="#environment">Environment</a>
+      </div>
+
+      <div class="nav-group" data-nav-group>
+        <div class="nav-heading">Reference</div>
+        <a class="nav-link" href="#cli">CLI reference</a>
+        <a class="nav-link" href="#api">Runtime API</a>
+        <a class="nav-link" href="#roadmap">Roadmap</a>
+      </div>
+    </aside>
+
+    <main class="main" id="content">
+      <section class="hero" id="top">
+        <span class="eyebrow"><span class="bolt" aria-hidden="true"></span> Lightweight backend runtime</span>
+        <h1>Run TypeScript with Go-powered backend primitives.</h1>
+        <p class="lead">
+          Golt bundles a TypeScript entry file with esbuild and executes it inside a Go-hosted JavaScript engine.
+          The runtime exposes a small, explicit API for HTTP, SQL, filesystem access, crypto, JWT, environment variables, logging, and outbound requests.
+        </p>
+
+        <div class="hero-actions">
+          <a class="pill pill-primary" href="#quickstart">Start in minutes</a>
+          <a class="pill" href="#api">Explore API</a>
+          <a class="pill" href="#database">See db.exec()</a>
+        </div>
+
+        <div class="stats" aria-label="Golt highlights">
+          <div class="stat"><strong>TypeScript</strong><span>Write TS, run bundled JS</span></div>
+          <div class="stat"><strong>Go engine</strong><span>goja + event loop</span></div>
+          <div class="stat"><strong>HTTP + DB</strong><span>Built-in backend APIs</span></div>
+          <div class="stat"><strong>VS Code</strong><span>Extension-managed typings</span></div>
+        </div>
+      </section>
+
+      <section class="doc-section" id="overview">
+        <div class="section-kicker">Overview</div>
+        <h2>What is Golt?</h2>
+        <p class="section-lead">
+          Golt is a small TypeScript/JavaScript backend runtime written in Go. It is not trying to clone Node.js.
+          Instead, it gives your scripts a deliberate set of backend APIs that are easy to reason about and evolve.
+        </p>
+
+        <div class="grid grid-3">
+          <article class="card">
+            <h3>Explicit runtime</h3>
+            <p>Only the APIs exposed by Golt are available globally. This keeps the runtime surface predictable.</p>
+          </article>
+          <article class="card">
+            <h3>Simple workflow</h3>
+            <p>Create a project, write <code>app.ts</code>, and run it through <code>golt run app.ts</code>.</p>
+          </article>
+          <article class="card">
+            <h3>Backend-focused</h3>
+            <p>HTTP routing, middleware, SQL, file IO, fetch, bcrypt, JWT, and logging are available from the runtime.</p>
+          </article>
+        </div>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span><span class="code-dots"><span></span><span></span><span></span></span> app.ts</span>
+            <button class="copy-code" type="button">Copy</button>
           </div>
+          <pre><code class="language-typescript">const app = Golt.App();
 
-          <h1 data-reveal
-            class="mt-5 text-balance text-4xl font-semibold tracking-tight opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none sm:text-5xl">
-            <span data-ab-variant="A">Run TypeScript on the Go.</span>
-            <span data-ab-variant="B" class="hidden">Power TypeScript with Go voltage.</span>
-          </h1>
+app.use(Golt.logger({ format: "dev" }));
 
-          <p data-reveal
-            class="mt-4 max-w-[70ch] text-pretty text-base leading-relaxed text-white/75 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-            Golt bundles your TypeScript entry file with <span class="text-white">esbuild</span> and executes it in a
-            <span class="text-white">Go-based</span> JS engine, with a small, explicit runtime API.
-          </p>
+app.get("/", (ctx) =&gt; {
+  ctx.Json({
+    message: "Hello from Golt!",
+    runtime: "golt",
+  });
+});
 
-          <div data-reveal
-            class="mt-6 flex flex-col gap-3 sm:flex-row opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-            <a class="inline-flex items-center justify-center gap-2 rounded-full bg-[#FCD34D] px-5 py-3 text-sm font-semibold text-black shadow-[0_18px_60px_rgba(252,211,77,.12)] transition hover:-translate-y-0.5 hover:bg-[#F59E0B] active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="#quickstart">
-              <span>Get started</span>
-              <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-arrow-right"></use>
-              </svg>
-            </a>
-            <a class="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="#api">
-              <span>See the API</span>
-              <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-chevron-right"></use>
-              </svg>
-            </a>
+app.serve(3000);</code></pre>
+        </div>
+      </section>
+
+      <section class="doc-section" id="quickstart">
+        <div class="section-kicker">Quickstart</div>
+        <h2>From zero to a running server.</h2>
+        <p class="section-lead">
+          The current scaffold is intentionally clean: the CLI creates the project files, while the VS Code extension manages editor typings when it detects <code>golt.json</code>.
+        </p>
+
+        <div class="steps">
+          <div class="step">
+            <div>
+              <h3>Create a project</h3>
+              <p>Use the new project-style init command.</p>
+            </div>
           </div>
-
-          <div data-reveal
-            class="mt-7 grid gap-3 sm:grid-cols-3 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div class="text-xs text-white/60">Workflow</div>
-              <div class="mt-1 text-sm font-semibold">init → run</div>
-              <div class="mt-1 text-xs text-white/55">Scaffold TS, execute instantly</div>
+          <div class="step">
+            <div>
+              <h3>Open it in VS Code</h3>
+              <p>The workspace recommendation points developers to the official Golt extension.</p>
             </div>
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div class="text-xs text-white/60">Runtime</div>
-              <div class="mt-1 text-sm font-semibold">Go-based JS</div>
-              <div class="mt-1 text-xs text-white/55">Small native surface area</div>
-            </div>
-            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div class="text-xs text-white/60">Built-ins</div>
-              <div class="mt-1 text-sm font-semibold">HTTP + db + fs + fetch</div>
-              <div class="mt-1 text-xs text-white/55">Explicit backend primitives, no Node runtime</div>
+          </div>
+          <div class="step">
+            <div>
+              <h3>Run the entry file</h3>
+              <p>Golt bundles and executes the TypeScript entry file.</p>
             </div>
           </div>
         </div>
 
-        <div class="lg:col-span-5">
-          <div data-reveal
-            class="relative overflow-hidden rounded-3xl border border-white/10 bg-[#111827]/55 p-5 shadow-[0_18px_60px_rgba(0,0,0,.55)] opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-            <div class="absolute -right-20 -top-14 h-64 w-64 rounded-full bg-[#3B82F6]/20 blur-3xl golt-drift"
-              aria-hidden="true"></div>
-            <div class="absolute -left-20 -bottom-16 h-64 w-64 rounded-full bg-[#FCD34D]/14 blur-3xl golt-drift"
-              aria-hidden="true"></div>
+        <div class="code-card">
+          <div class="code-header">
+            <span><span class="code-dots"><span></span><span></span><span></span></span> Terminal</span>
+            <button class="copy-code" type="button">Copy</button>
+          </div>
+          <pre><code class="language-bash">golt init my-api
+cd my-api
+code .
+golt run app.ts</code></pre>
+        </div>
+      </section>
 
-            <div class="flex items-center justify-between gap-3">
-              <div class="min-w-0">
-                <div class="text-xs text-white/60">Try it</div>
-                <div class="truncate text-sm font-semibold">Quickstart</div>
-              </div>
-              <button
-                class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                type="button" data-copy="#hero-snippet" data-label="Copy">
-                <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-copy"></use>
-                </svg>
-                <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-check"></use>
-                </svg>
-                <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-x"></use>
-                </svg>
-                <span class="copy-label" aria-live="polite">Copy</span>
-              </button>
+      <section class="doc-section" id="project-structure">
+        <div class="section-kicker">Project structure</div>
+        <h2>The scaffold Golt creates.</h2>
+        <p class="section-lead">
+          The CLI should generate only the files that belong to the runtime project. Editor-specific typings are delegated to the extension.
+        </p>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span><span class="code-dots"><span></span><span></span><span></span></span> Generated files</span>
+            <button class="copy-code" type="button">Copy</button>
+          </div>
+          <pre><code class="language-treeview">my-api/
+├─ app.ts
+├─ golt.json
+└─ .vscode/
+   └─ extensions.json</code></pre>
+        </div>
+
+        <div class="grid grid-2">
+          <article class="card">
+            <h3><code>golt.json</code></h3>
+            <p>Project metadata and workspace marker used by the VS Code extension.</p>
+            <div class="code-card">
+              <div class="code-header"><span>golt.json</span><button class="copy-code" type="button">Copy</button></div>
+              <pre><code class="language-json">{
+  "name": "my-api",
+  "description": "A Golt Runtime project",
+  "version": "0.1.0"
+}</code></pre>
             </div>
+          </article>
 
-            <pre
-              class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="hero-snippet">golt init
-golt run app.ts
+          <article class="card">
+            <h3><code>.vscode/extensions.json</code></h3>
+            <p>Recommends the official editor extension without forcing it.</p>
+            <div class="code-card">
+              <div class="code-header"><span>extensions.json</span><button class="copy-code" type="button">Copy</button></div>
+              <pre><code class="language-json">{
+  "recommendations": [
+    "Aztekode.golt-vscode"
+  ]
+}</code></pre>
+            </div>
+          </article>
+        </div>
+      </section>
 
-// app.ts
-const app = Golt.App();
+      <section class="doc-section" id="vscode">
+        <div class="section-kicker">Editor integration</div>
+        <h2>VS Code typings are extension-managed.</h2>
+        <p class="section-lead">
+          When the extension finds <code>golt.json</code>, it can generate the Golt typings under <code>.golt/types</code> and patch <code>tsconfig.json</code> or <code>jsconfig.json</code>. This keeps the CLI scaffold smaller and avoids coupling runtime releases to editor-only type updates.
+        </p>
 
-app.use(Golt.logger({ format: "tiny" }));
+        <div class="callout">
+          <span>⚡</span>
+          <div>
+            <strong>Recommended policy:</strong> changes that only affect TypeScript editor types should be released through <code>golt-vscode</code>. Runtime behavior should remain in the Go CLI/runtime.
+          </div>
+        </div>
+      </section>
 
-app.get("/", (c) =&gt; {
-  c.Send("Hello from Golt HTTP");
+      <section class="doc-section" id="http">
+        <div class="section-kicker">HTTP</div>
+        <h2>HTTP server with routes, middleware, static files, and safe finalization.</h2>
+        <p class="section-lead">
+          <code>Golt.App()</code> creates an HTTP app backed by Go's <code>net/http</code>. Routes use method-aware patterns like <code>GET /users/{id}</code>, and handlers receive a <code>Context</code> object.
+        </p>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span><span class="code-dots"><span></span><span></span><span></span></span> HTTP example</span>
+            <button class="copy-code" type="button">Copy</button>
+          </div>
+          <pre><code class="language-typescript">const app = Golt.App();
+
+app.use(Golt.logger({ format: "dev" }));
+
+app.get("/", (ctx) =&gt; {
+  ctx.Send("Hello from Golt HTTP");
 });
 
-app.get("/users/{id}", (c) =&gt; {
-  c.Json({ id: c.Param("id") });
+app.get("/users/{id}", (ctx) =&gt; {
+  ctx.Json({ id: ctx.Param("id") });
+});
+
+app.post("/users", (ctx) =&gt; {
+  const body = ctx.ValidateBody({ name: "string" });
+  if (!body) return;
+
+  ctx.Status(201).Json({
+    ok: true,
+    name: body.name,
+  });
 });
 
 app.static("/public", "./public", true);
 
-app.notFound((c) =&gt; {
-  c.Status(404).Send("not found");
+app.notFound((ctx) =&gt; {
+  ctx.Status(404).Send("not found");
 });
 
 app.serve(3000);</code></pre>
-
-            <div class="mt-4 grid gap-3 sm:grid-cols-2">
-              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <div class="flex items-center gap-2 text-xs text-white/60">
-                  <span class="h-2 w-2 rounded-full bg-[#FCD34D]" aria-hidden="true"></span>
-                  <span>Bundled execution</span>
-                </div>
-                <div class="mt-2 text-sm font-semibold">esbuild → single bundle</div>
-                <div class="mt-1 text-xs text-white/55">TypeScript in, optimized JS out</div>
-              </div>
-              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <div class="flex items-center gap-2 text-xs text-white/60">
-                  <span class="h-2 w-2 rounded-full bg-[#3B82F6]" aria-hidden="true"></span>
-                  <span>Extensible</span>
-                </div>
-                <div class="mt-2 text-sm font-semibold">Native modules</div>
-                <div class="mt-1 text-xs text-white/55">Grow the API surface deliberately</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="mx-auto max-w-6xl px-4 pt-14" id="features">
-      <div data-reveal
-        class="opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-        <div class="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div class="text-xs tracking-wide text-white/55">Features</div>
-            <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">High voltage, low surface area.</h2>
-            <p class="mt-3 max-w-[70ch] text-sm leading-relaxed text-white/70">
-              Built for developers who want TypeScript ergonomics with Go deployment discipline: predictable runtime
-              APIs and a clean CLI.
-            </p>
-          </div>
-          <a class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            href="#quickstart">
-            <span>Jump to quickstart</span>
-            <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-              <use href="#i-chevron-right"></use>
-            </svg>
-          </a>
-        </div>
-      </div>
-
-      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div data-reveal
-          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start gap-3">
-            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-[#3B82F6]/20 ring-1 ring-white/10">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M4 7h16M7 12h10M9 17h6" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm font-semibold">TypeScript-first</div>
-              <p class="mt-1 text-sm text-white/65">Write TS. Bundle and run it without juggling Node tooling at
-                runtime.</p>
-            </div>
-          </div>
         </div>
 
-        <div data-reveal
-          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start gap-3">
-            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-[#FCD34D]/15 ring-1 ring-white/10">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 2l2.6 6.4L21 9l-5 4.2L17.2 21 12 17.8 6.8 21 8 13.2 3 9l6.4-.6L12 2z" stroke="#FCD34D"
-                  stroke-width="1.6" stroke-linejoin="round" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm font-semibold">Bundled execution</div>
-              <p class="mt-1 text-sm text-white/65">esbuild compiles and bundles your entry file into a single
-                executable script.</p>
-            </div>
-          </div>
+        <div class="badge-row">
+          <span class="badge">Routing</span>
+          <span class="badge">Middleware</span>
+          <span class="badge">Static files</span>
+          <span class="badge">404 handler</span>
+          <span class="badge">204 fallback</span>
         </div>
+      </section>
 
-        <div data-reveal
-          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start gap-3">
-            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-white/5 ring-1 ring-white/10">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M7 7h10v10H7z" stroke="#FCD34D" stroke-width="1.8" />
-                <path d="M5 5h14" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" />
-                <path d="M5 19h14" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm font-semibold">Small API surface</div>
-              <p class="mt-1 text-sm text-white/65">Keep runtime globals explicit and stable as your project grows.</p>
-            </div>
-          </div>
-        </div>
-
-        <div data-reveal
-          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start gap-3">
-            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-[#3B82F6]/15 ring-1 ring-white/10">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M4 12h6" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" />
-                <path d="M14 12h6" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" />
-                <path d="M10 8l4 4-4 4" stroke="#FCD34D" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm font-semibold">HTTP server</div>
-              <p class="mt-1 text-sm text-white/65"><code class="text-white">Golt.App()</code> gives you routing,
-                middleware, and a <code class="text-white">net/http</code> server, with Go-style path params like
-                <code class="text-white">/users/{id}</code>.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div data-reveal
-          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start gap-3">
-            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-[#1E40AF]/20 ring-1 ring-white/10">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M4 12h7l2-3 2 6 2-3h3" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm font-semibold">Event loop friendly</div>
-              <p class="mt-1 text-sm text-white/65">Runs in a Node-like event loop model (via goja_nodejs).</p>
-            </div>
-          </div>
-        </div>
-
-        <div data-reveal
-          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start gap-3">
-            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-[#F59E0B]/15 ring-1 ring-white/10">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 3v18" stroke="#FCD34D" stroke-width="1.8" stroke-linecap="round" />
-                <path d="M7 8l5-5 5 5" stroke="#FCD34D" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-                <path d="M7 16l5 5 5-5" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm font-semibold">Easy scaffolding</div>
-              <p class="mt-1 text-sm text-white/65"><code class="text-white">golt init</code> creates TS config and
-                typings for you.</p>
-            </div>
-          </div>
-        </div>
-
-        <div data-reveal
-          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start gap-3">
-            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-[#3B82F6]/15 ring-1 ring-white/10">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M4 7h16M7 12h10M9 17h6" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm font-semibold">Database access</div>
-              <p class="mt-1 text-sm text-white/65"><code class="text-white">Golt.db</code> wraps Go <code
-                  class="text-white">database/sql</code> with Promise-based queries.</p>
-            </div>
-          </div>
-        </div>
-
-        <div data-reveal
-          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start gap-3">
-            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-[#FCD34D]/15 ring-1 ring-white/10">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M4 12h7l2-3 2 6 2-3h3" stroke="#FCD34D" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm font-semibold">fetch + crypto</div>
-              <p class="mt-1 text-sm text-white/65">Outbound HTTP via <code class="text-white">fetch</code>, plus <code
-                  class="text-white">Golt.crypto</code> and <code class="text-white">Golt.jwt</code>.</p>
-            </div>
-          </div>
-        </div>
-
-        <div data-reveal
-          class="group rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out hover:bg-white/10 motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start gap-3">
-            <div class="grid h-10 w-10 place-items-center rounded-2xl bg-white/5 ring-1 ring-white/10">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M9 12l2 2 4-4" stroke="#FCD34D" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-                <path d="M12 2l8 4v6c0 5-3.5 9.4-8 10-4.5-.6-8-5-8-10V6l8-4z" stroke="#3B82F6" stroke-width="1.6"
-                  stroke-linejoin="round" opacity=".9" />
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm font-semibold">Developer friendly errors</div>
-              <p class="mt-1 text-sm text-white/65">Compilation and runtime errors are surfaced clearly to stdout.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="mx-auto max-w-6xl px-4 pt-14" id="how">
-      <div class="grid gap-6 rounded-3xl border border-white/10 bg-[#111827]/35 p-6 sm:p-8">
-        <div data-reveal
-          class="opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="text-xs tracking-wide text-white/55">How it works</div>
-          <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">A clean circuit: compile → run → extend.
-          </h2>
-          <p class="mt-3 max-w-[72ch] text-sm leading-relaxed text-white/70">
-            Golt is intentionally simple: it builds a bundle from your entry file, spins up a Go-hosted runtime, then
-            registers native modules (like <code class="text-white">console</code>, <code
-              class="text-white">Golt.env</code>, <code class="text-white">Golt.logger</code>, <code
-              class="text-white">Golt.App</code>, <code class="text-white">Golt.db</code>, <code
-              class="text-white">Golt.fs</code>, <code class="text-white">Golt.crypto</code>/<code
-              class="text-white">Golt.jwt</code>, and <code class="text-white">fetch()</code>) before executing your
-            program.
-          </p>
-        </div>
-
-        <div class="grid gap-4 sm:grid-cols-3">
-          <div data-reveal
-            class="rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-[#FCD34D]">01</span>
-              <span class="h-px flex-1 bg-white/10 mx-3"></span>
-              <span class="text-xs text-white/60">Bundle</span>
-            </div>
-            <div class="mt-3 text-sm font-semibold">esbuild compiles TS</div>
-            <p class="mt-2 text-sm text-white/65">Your entry file becomes a single runnable JS bundle.</p>
-          </div>
-
-          <div data-reveal
-            class="rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-[#3B82F6]">02</span>
-              <span class="h-px flex-1 bg-white/10 mx-3"></span>
-              <span class="text-xs text-white/60">Execute</span>
-            </div>
-            <div class="mt-3 text-sm font-semibold">Go-hosted JS runtime</div>
-            <p class="mt-2 text-sm text-white/65">Run inside a Go engine with an event loop model.</p>
-          </div>
-
-          <div data-reveal
-            class="rounded-3xl border border-white/10 bg-white/5 p-5 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-[#F59E0B]">03</span>
-              <span class="h-px flex-1 bg-white/10 mx-3"></span>
-              <span class="text-xs text-white/60">Extend</span>
-            </div>
-            <div class="mt-3 text-sm font-semibold">Register native modules</div>
-            <p class="mt-2 text-sm text-white/65">Expose carefully chosen APIs as your platform evolves.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="mx-auto max-w-6xl px-4 pt-14" id="api">
-      <div data-reveal
-        class="opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-        <div class="text-xs tracking-wide text-white/55">API</div>
-        <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Small, explicit runtime primitives.</h2>
-        <p class="mt-3 max-w-[72ch] text-sm leading-relaxed text-white/70">
-          Golt exposes an explicit backend surface area: <code class="text-white">console.log</code>, global <code
-            class="text-white">fetch()</code>, and <code class="text-white">Golt.*</code> modules for env, HTTP, DB, FS,
-          crypto/JWT, and logging.
+      <section class="doc-section" id="database">
+        <div class="section-kicker">Database</div>
+        <h2>Use <code>exec()</code> for writes and <code>query()</code> for rows.</h2>
+        <p class="section-lead">
+          Golt wraps Go's <code>database/sql</code>. The API separates commands that mutate state from commands that return rows.
         </p>
-      </div>
 
-      <div class="mt-7 grid gap-4 md:grid-cols-2">
-        <div data-reveal
-          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-sm font-semibold"><code class="text-white">console.log(...args)</code></div>
-              <p class="mt-2 text-sm text-white/65">Print exported JS values to stdout.</p>
-            </div>
-            <button
-              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-console" data-label="Copy">
-              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-copy"></use>
-              </svg>
-              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-check"></use>
-              </svg>
-              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-x"></use>
-              </svg>
-              <span class="copy-label" aria-live="polite">Copy</span>
-            </button>
-          </div>
-          <pre
-            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-console">console.log("Hello from Golt");
-console.log({ ok: true, now: Date.now() });</code></pre>
+        <div class="grid grid-2">
+          <article class="card">
+            <h3><code>db.exec()</code></h3>
+            <p>Use for schema changes, inserts, updates, deletes, and other statements that do not return rows.</p>
+          </article>
+          <article class="card">
+            <h3><code>db.query()</code></h3>
+            <p>Use for SELECT statements and operations that return tabular results.</p>
+          </article>
         </div>
 
-        <div data-reveal
-          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-sm font-semibold"><code class="text-white">Golt.env</code></div>
-              <p class="mt-2 text-sm text-white/65">Access host environment variables: <code
-                  class="text-white">Record&lt;string, string | undefined&gt;</code>.</p>
-            </div>
-            <button
-              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-env" data-label="Copy">
-              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-copy"></use>
-              </svg>
-              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-check"></use>
-              </svg>
-              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-x"></use>
-              </svg>
-              <span class="copy-label" aria-live="polite">Copy</span>
-            </button>
+        <div class="code-card">
+          <div class="code-header">
+            <span><span class="code-dots"><span></span><span></span><span></span></span> SQLite example</span>
+            <button class="copy-code" type="button">Copy</button>
           </div>
-          <pre
-            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-env">console.log("PATH =", Golt.env["PATH"]);
-console.log("NODE_ENV =", Golt.env["NODE_ENV"]);</code></pre>
-        </div>
+          <pre><code class="language-typescript">const db = Golt.db.connect("sqlite", "./app.db");
 
-        <div data-reveal
-          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-sm font-semibold"><code class="text-white">fetch(url, options?)</code></div>
-              <p class="mt-2 text-sm text-white/65">Outbound HTTP via Go <code class="text-white">net/http</code>, with a
-                minimal Response API.</p>
-            </div>
-            <button
-              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-fetch" data-label="Copy">
-              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-copy"></use>
-              </svg>
-              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-check"></use>
-              </svg>
-              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-x"></use>
-              </svg>
-              <span class="copy-label" aria-live="polite">Copy</span>
-            </button>
-          </div>
-          <pre
-            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-fetch">fetch("https://httpbin.org/json")
-  .then((r) =&gt; r.json())
-  .then((data) =&gt; console.log(data));</code></pre>
-        </div>
+await db.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+  )
+`);
 
-        <div data-reveal
-          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-sm font-semibold"><code class="text-white">Golt.db</code></div>
-              <p class="mt-2 text-sm text-white/65">Promise-based SQL queries over Go <code
-                  class="text-white">database/sql</code> (sqlite/postgres/mysql/sqlserver).</p>
-            </div>
-            <button
-              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-db" data-label="Copy">
-              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-copy"></use>
-              </svg>
-              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-check"></use>
-              </svg>
-              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-x"></use>
-              </svg>
-              <span class="copy-label" aria-live="polite">Copy</span>
-            </button>
-          </div>
-          <pre
-            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-db">const db = Golt.db.connect("sqlite", "./app.db");
-db.query("SELECT 1 AS ok").then((rows) =&gt; console.log(rows));</code></pre>
-        </div>
+const insert = await db.exec(
+  "INSERT INTO users(name) VALUES (?)",
+  "Ada"
+);
 
-        <div data-reveal
-          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-sm font-semibold"><code class="text-white">Golt.fs</code></div>
-              <p class="mt-2 text-sm text-white/65">Minimal filesystem helpers (<code
-                  class="text-white">readFile</code>/<code class="text-white">writeFile</code>).</p>
-            </div>
-            <button
-              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-fs" data-label="Copy">
-              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-copy"></use>
-              </svg>
-              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-check"></use>
-              </svg>
-              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-x"></use>
-              </svg>
-              <span class="copy-label" aria-live="polite">Copy</span>
-            </button>
-          </div>
-          <pre
-            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-fs">Golt.fs.writeFile("./hello.txt", "Hello from Golt\n");
-console.log(Golt.fs.readFile("./hello.txt"));</code></pre>
-        </div>
+console.log("Insert result:", insert);
 
-        <div data-reveal
-          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-sm font-semibold"><code class="text-white">Golt.crypto</code> + <code
-                  class="text-white">Golt.jwt</code></div>
-              <p class="mt-2 text-sm text-white/65">bcrypt hashing + HS256 JWT helpers.</p>
-            </div>
-            <button
-              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-crypto" data-label="Copy">
-              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-copy"></use>
-              </svg>
-              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-check"></use>
-              </svg>
-              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-x"></use>
-              </svg>
-              <span class="copy-label" aria-live="polite">Copy</span>
-            </button>
+const users = await db.query&lt;{ id: number; name: string }&gt;(
+  "SELECT id, name FROM users"
+);
+
+console.log(users);
+
+db.close();</code></pre>
+        </div>
+      </section>
+
+      <section class="doc-section" id="fetch">
+        <div class="section-kicker">Outbound HTTP</div>
+        <h2>Minimal global <code>fetch()</code>.</h2>
+        <p class="section-lead">
+          Golt exposes a small <code>fetch()</code> implementation powered by Go's <code>net/http</code>. It supports method, headers, body, timeout, and response helpers.
+        </p>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span><span class="code-dots"><span></span><span></span><span></span></span> Fetch example</span>
+            <button class="copy-code" type="button">Copy</button>
           </div>
-          <pre
-            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-crypto">Golt.crypto.hash("password123").then((hash) =&gt; {
-  return Golt.crypto.compare("password123", hash);
-}).then((ok) =&gt; console.log("match =", ok));
+          <pre><code class="language-typescript">const response = await fetch("https://httpbin.org/json", {
+  method: "GET",
+  timeout: 15000,
+});
+
+if (!response.ok) {
+  console.log("Request failed:", response.status);
+}
+
+const data = await response.json();
+console.log(data);</code></pre>
+        </div>
+      </section>
+
+      <section class="doc-section" id="filesystem">
+        <div class="section-kicker">File system</div>
+        <h2>Simple read/write helpers.</h2>
+        <p class="section-lead">
+          <code>Golt.fs</code> currently provides synchronous helpers for small file operations.
+        </p>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span><span class="code-dots"><span></span><span></span><span></span></span> File system example</span>
+            <button class="copy-code" type="button">Copy</button>
+          </div>
+          <pre><code class="language-typescript">Golt.fs.writeFile("./hello.txt", "Hello from Golt\n");
+
+const content = Golt.fs.readFile("./hello.txt");
+
+console.log(content);</code></pre>
+        </div>
+      </section>
+
+      <section class="doc-section" id="crypto">
+        <div class="section-kicker">Security helpers</div>
+        <h2>Password hashing and JWT helpers.</h2>
+        <p class="section-lead">
+          <code>Golt.crypto</code> provides bcrypt hashing and comparison. <code>Golt.jwt</code> provides HS256 token signing and verification.
+        </p>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span><span class="code-dots"><span></span><span></span><span></span></span> Crypto + JWT</span>
+            <button class="copy-code" type="button">Copy</button>
+          </div>
+          <pre><code class="language-typescript">const hash = await Golt.crypto.hash("password123");
+const isValid = await Golt.crypto.compare("password123", hash);
+
+console.log("Password match:", isValid);
 
 const token = Golt.jwt.sign({ sub: "user_123" }, "secret", 24);
-console.log(Golt.jwt.verify(token, "secret"));</code></pre>
+const payload = Golt.jwt.verify(token, "secret");
+
+console.log(payload);</code></pre>
         </div>
+      </section>
 
-        <div data-reveal
-          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-sm font-semibold"><code class="text-white">Golt.App()</code></div>
-              <p class="mt-2 text-sm text-white/65">Create an HTTP app: routes, middleware, notFound, and <code
-                  class="text-white">app.serve(port)</code>.</p>
-            </div>
-            <button
-              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-app" data-label="Copy">
-              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-copy"></use>
-              </svg>
-              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-check"></use>
-              </svg>
-              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-x"></use>
-              </svg>
-              <span class="copy-label" aria-live="polite">Copy</span>
-            </button>
+      <section class="doc-section" id="environment">
+        <div class="section-kicker">Environment</div>
+        <h2>Access host environment variables.</h2>
+        <p class="section-lead">
+          <code>Golt.env</code> exposes a map of environment variables from the host process.
+        </p>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span><span class="code-dots"><span></span><span></span><span></span></span> Environment variables</span>
+            <button class="copy-code" type="button">Copy</button>
           </div>
+          <pre><code class="language-typescript">console.log("PATH =", Golt.env["PATH"]);
+console.log("NODE_ENV =", Golt.env["NODE_ENV"]);</code></pre>
+        </div>
+      </section>
 
-          <div class="mt-3 rounded-2xl border border-white/10 bg-black/30 p-4 text-xs text-white/65">
-            Routes are registered on a per-app <code class="text-white">ServeMux</code> using Go 1.22+ patterns (e.g.
-            <code class="text-white">/users/{id}</code>). Access params with <code
-              class="text-white">c.Param("id")</code>.
-            Middleware runs in a simple <code class="text-white">next()</code> chain before the route handler.
-            Serve static files with <code class="text-white">app.static("/public", "./public", true)</code>.
+      <section class="doc-section" id="cli">
+        <div class="section-kicker">CLI reference</div>
+        <h2>Commands.</h2>
+        <p class="section-lead">
+          The CLI keeps the workflow focused: create a project, run an entry file, or restart on changes.
+        </p>
+
+        <div class="api-list">
+          <div class="api-item">
+            <code>golt init &lt;project-name&gt;</code>
+            <p>Creates a new project folder with <code>app.ts</code>, <code>golt.json</code>, and <code>.vscode/extensions.json</code>.</p>
           </div>
-
-          <pre
-            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-app">const app = Golt.App();
-
-app.get("/", (c) =&gt; c.Send("hello"));
-
-app.get("/users/{id}", (c) =&gt; {
-  c.Json({ id: c.Param("id") });
-});
-
-app.static("/public", "./public", true);
-
-app.notFound((c) =&gt; c.Status(404).Send("not found"));
-
-app.serve(3000);</code></pre>
-
-          <div class="mt-4 text-xs text-white/60">
-            <span class="font-semibold text-white/80">Context:</span>
-            <span class="ml-1">Method(), Url(), Param(), GetHeader(), SetHeader(), Query(), Set(), Get(), Status(),
-              Send(), Json(), ValidateBody()</span>
+          <div class="api-item">
+            <code>golt run &lt;filename.ts&gt;</code>
+            <p>Bundles the entry file with esbuild and runs it in the Golt runtime.</p>
+          </div>
+          <div class="api-item">
+            <code>golt watch &lt;filename.ts&gt;</code>
+            <p>Runs the entry file and restarts on TypeScript/JavaScript changes.</p>
           </div>
         </div>
+      </section>
 
-        <div data-reveal
-          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="text-sm font-semibold"><code class="text-white">Golt.logger(config?)</code></div>
-              <p class="mt-2 text-sm text-white/65">Create a logging middleware for <code
-                  class="text-white">app.use</code>.</p>
-            </div>
-            <button
-              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#api-logger" data-label="Copy">
-              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-copy"></use>
-              </svg>
-              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-check"></use>
-              </svg>
-              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-x"></use>
-              </svg>
-              <span class="copy-label" aria-live="polite">Copy</span>
-            </button>
-          </div>
+      <section class="doc-section" id="api">
+        <div class="section-kicker">Runtime API</div>
+        <h2>Current API surface.</h2>
+        <p class="section-lead">
+          These are the runtime primitives currently documented by Golt.
+        </p>
 
-          <div class="mt-3 rounded-2xl border border-white/10 bg-black/30 p-4 text-xs text-white/65">
-            Formats: <code class="text-white">"dev"</code> (default), <code class="text-white">"tiny"</code>, or <code
-              class="text-white">"json"</code>.
-          </div>
-
-          <pre
-            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="api-logger">const app = Golt.App();
-
-app.use(Golt.logger({ format: "tiny" }));
-
-app.get("/", (c) =&gt; c.Send("ok"));
-
-app.serve(3000);</code></pre>
+        <div class="api-list">
+          <div class="api-item"><code>console.log(...args)</code><p>Prints exported JS values to stdout.</p></div>
+          <div class="api-item"><code>Golt.App()</code><p>Creates an HTTP app with routes, middleware, static files, and server start.</p></div>
+          <div class="api-item"><code>Golt.logger(config?)</code><p>Creates HTTP logging middleware. Formats: <code>dev</code>, <code>tiny</code>, <code>json</code>.</p></div>
+          <div class="api-item"><code>Golt.db.connect(dialect, dsn)</code><p>Connects to sqlite, postgres, mysql, or sqlserver.</p></div>
+          <div class="api-item"><code>db.exec(sql, ...args)</code><p>Executes non-row SQL statements and returns metadata.</p></div>
+          <div class="api-item"><code>db.query(sql, ...args)</code><p>Executes SQL queries that return rows.</p></div>
+          <div class="api-item"><code>fetch(url, options?)</code><p>Performs outbound HTTP requests.</p></div>
+          <div class="api-item"><code>Golt.fs</code><p>Reads and writes files.</p></div>
+          <div class="api-item"><code>Golt.crypto</code><p>Hashes and compares passwords using bcrypt.</p></div>
+          <div class="api-item"><code>Golt.jwt</code><p>Signs and verifies HS256 JWT tokens.</p></div>
+          <div class="api-item"><code>Golt.env</code><p>Reads environment variables from the host process.</p></div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="mx-auto max-w-6xl px-4 pt-14" id="quickstart">
-      <div class="grid gap-6 rounded-3xl border border-white/10 bg-[#111827]/35 p-6 sm:p-8">
-        <div data-reveal
-          class="opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="text-xs tracking-wide text-white/55">Quickstart</div>
-          <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">From zero to running in minutes.</h2>
-          <p class="mt-3 max-w-[72ch] text-sm leading-relaxed text-white/70">
-            <code class="text-white">golt init</code> scaffolds a minimal TypeScript project (including typings), and
-            <code class="text-white">golt run</code> executes your entry file.
-          </p>
+      <section class="doc-section" id="roadmap">
+        <div class="section-kicker">Roadmap</div>
+        <h2>What should come next?</h2>
+        <p class="section-lead">
+          Since HTTP finalization, <code>db.exec()</code>, and the improved init workflow are already in place, the next practical milestone is test coverage and CLI polish that does not force a VS Code extension release.
+        </p>
+
+        <div class="grid grid-2">
+          <article class="card">
+            <h3>Near-term</h3>
+            <ul>
+              <li>Tests for HTTP request finalization.</li>
+              <li>Tests for <code>db.query()</code> and <code>db.exec()</code>.</li>
+              <li>Tests for <code>fetch()</code> success and error paths.</li>
+              <li>Recursive <code>watch</code> behavior.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h3>Later</h3>
+            <ul>
+              <li><code>Golt.env.get("KEY", fallback)</code>.</li>
+              <li><code>ctx.Body()</code> / <code>ctx.JsonBody()</code>.</li>
+              <li><code>fetch()</code> JSON helpers.</li>
+              <li>Better source maps and original TypeScript line reporting.</li>
+            </ul>
+          </article>
         </div>
+      </section>
 
-        <div data-reveal
-          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <div class="text-sm font-semibold">TypeScript typings</div>
-              <p class="mt-2 text-sm text-white/65">
-                <code class="text-white">golt init</code> generates <code class="text-white">golt.d.ts</code> with
-                typings for <code class="text-white">fetch()</code> and all <code class="text-white">Golt.*</code>
-                modules (HTTP, DB, FS, crypto/JWT, logging, env).
-              </p>
-            </div>
-            <button
-              class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              type="button" data-copy="#qs-typings" data-label="Copy">
-              <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-copy"></use>
-              </svg>
-              <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-check"></use>
-              </svg>
-              <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-x"></use>
-              </svg>
-              <span class="copy-label" aria-live="polite">Copy</span>
-            </button>
-          </div>
-          <pre
-            class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="qs-typings">declare interface FetchHeaders {
-  get(name: string): string | null;
-}
+      <footer class="footer">
+        Golt Runtime documentation. Built as a static GitHub Pages-ready document.
+      </footer>
+    </main>
 
-declare interface FetchResponse {
-  ok: boolean;
-  status: number;
-  statusText: string;
-  headers: FetchHeaders;
-  text(): Promise&lt;string&gt;;
-  json&lt;T = any&gt;(): Promise&lt;T&gt;;
-}
+    <aside class="toc" aria-label="On this page">
+      <div class="toc-title">On this page</div>
+      <a href="#overview">Overview</a>
+      <a href="#quickstart">Quickstart</a>
+      <a href="#http">HTTP</a>
+      <a href="#database">Database</a>
+      <a href="#cli">CLI</a>
+      <a href="#api">API</a>
+      <a href="#roadmap">Roadmap</a>
+    </aside>
+  </div>
 
-declare interface FetchOptions {
-  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-  headers?: Record&lt;string, string&gt;;
-  body?: string;
-  timeout?: number;
-}
-
-declare function fetch(url: string, options?: FetchOptions): Promise&lt;FetchResponse&gt;;
-
-declare namespace Golt {
-  export const env: Record&lt;string, string | undefined&gt;;
-
-  export type SchemaType = "string" | "number" | "boolean";
-
-  export type InferType&lt;T&gt; = T extends "string"
-    ? string
-    : T extends "number"
-    ? number
-    : T extends "boolean"
-    ? boolean
-    : never;
-
-  export type InferSchema&lt;T extends Record&lt;string, SchemaType&gt;&gt; = {
-    [K in keyof T]: InferType&lt;T[K]&gt;;
-  };
-
-  export type Next = () =&gt; void;
-  export type Middleware = (c: Context, next: Next) =&gt; void;
-
-  export interface LoggerConfig {
-    format?: "dev" | "tiny" | "json";
-  }
-
-  export type DbDialect = "sqlite" | "postgres" | "mysql" | "sqlserver";
-
-  export interface DatabaseClient {
-    query&lt;T = any&gt;(sql: string, ...args: any[]): Promise&lt;T[]&gt;;
-    close(): void;
-  }
-
-  export interface Database {
-    connect(dialect: DbDialect, connectionString: string): DatabaseClient;
-    query&lt;T = any&gt;(sql: string, ...args: any[]): Promise&lt;T[]&gt;;
-  }
-
-  export interface Context {
-    Method(): string;
-    Url(): string;
-    Param(name: string): string;
-    GetHeader(key: string): string;
-    SetHeader(key: string, value: string): void;
-    Set(key: string, value: any): void;
-    Get&lt;T = any&gt;(key: string): T | undefined;
-    Query(key: string): string;
-    Status(code: number): Context;
-    Send(body: string): void;
-    Json(data: any): void;
-    ValidateBody&lt;T extends Record&lt;string, SchemaType&gt;&gt;(schema: T): InferSchema&lt;T&gt; | null;
-  }
-
-  export interface Fs {
-    readFile(path: string): string;
-    writeFile(path: string, content: string): void;
-  }
-
-  export interface Crypto {
-    hash(password: string, cost?: number): Promise&lt;string&gt;;
-    compare(password: string, hash: string): Promise&lt;boolean&gt;;
-  }
-
-  export interface Jwt {
-    sign(payload: Record&lt;string, any&gt;, secret: string, expHours?: number): string;
-    verify&lt;T = Record&lt;string, any&gt;&gt;(token: string, secret: string): T | null;
-  }
-
-  export interface AppInstance {
-    use(middleware: Middleware): AppInstance;
-    get(path: string, handler: (c: Context) =&gt; void): AppInstance;
-    post(path: string, handler: (c: Context) =&gt; void): AppInstance;
-    put(path: string, handler: (c: Context) =&gt; void): AppInstance;
-    delete(path: string, handler: (c: Context) =&gt; void): AppInstance;
-    static(prefix: string, dirPath: string, spa?: boolean): AppInstance;
-    notFound(handler: (c: Context) =&gt; void): AppInstance;
-    serve(port: number): void;
-  }
-
-  export function App(): AppInstance;
-  export const db: Database;
-  export const fs: Fs;
-  export const crypto: Crypto;
-  export const jwt: Jwt;
-
-  export function logger(config?: LoggerConfig): Middleware;
-}</code></pre>
-        </div>
-
-        <div class="grid gap-4 lg:grid-cols-2">
-          <div data-reveal
-            class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <div class="text-sm font-semibold">Install</div>
-                <p class="mt-2 text-sm text-white/65">Build from source (Windows example):</p>
-              </div>
-              <button
-                class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                type="button" data-copy="#qs-install" data-label="Copy">
-                <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-copy"></use>
-                </svg>
-                <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-check"></use>
-                </svg>
-                <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-x"></use>
-                </svg>
-                <span class="copy-label" aria-live="polite">Copy</span>
-              </button>
-            </div>
-            <pre
-              class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="qs-install">go build -o golt.exe .\cmd\golt</code></pre>
-            <div class="mt-4 rounded-2xl border border-white/10 bg-black/30 p-4 text-xs text-white/65">
-              Or install with: <code class="text-white">go install .\cmd\golt</code>
-            </div>
-          </div>
-
-          <div data-reveal
-            class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <div class="text-sm font-semibold">Run</div>
-                <p class="mt-2 text-sm text-white/65">Initialize and execute your first script:</p>
-              </div>
-              <button
-                class="copybtn inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 transition hover:-translate-y-0.5 hover:bg-white/10 hover:text-white active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                type="button" data-copy="#qs-run" data-label="Copy">
-                <svg class="icon-copy h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-copy"></use>
-                </svg>
-                <svg class="icon-check hidden h-4 w-4 text-[#FCD34D]" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-check"></use>
-                </svg>
-                <svg class="icon-x hidden h-4 w-4 text-[#F59E0B]" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-x"></use>
-                </svg>
-                <span class="copy-label" aria-live="polite">Copy</span>
-              </button>
-            </div>
-            <pre
-              class="mt-4 overflow-auto rounded-2xl border border-white/10 bg-black/60 p-4 text-[12.5px] leading-relaxed text-white/90"><code id="qs-run">golt init
-golt run .\app.ts</code></pre>
-            <div class="mt-4 rounded-2xl border border-white/10 bg-black/30 p-4 text-xs text-white/65">
-              Tip: <code class="text-white">golt init</code> creates <code class="text-white">golt.d.ts</code>, <code
-                class="text-white">tsconfig.json</code>, and <code class="text-white">app.ts</code>.
-              Watch mode: <code class="text-white">golt watch .\app.ts</code>.
-            </div>
-          </div>
-        </div>
-
-        <div data-reveal
-          class="rounded-3xl border border-white/10 bg-white/5 p-6 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none">
-          <div class="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <div class="text-sm font-semibold">Read more</div>
-              <p class="mt-2 text-sm text-white/65">Jump to the repository README and contribution guidelines.</p>
-            </div>
-            <div class="flex flex-col gap-2 sm:flex-row">
-              <a class="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                href="https://github.com/atrox39/golt#readme" rel="noreferrer">
-                <span>Open README</span>
-                <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-chevron-right"></use>
-                </svg>
-              </a>
-              <a class="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                href="https://marketplace.visualstudio.com/items?itemName=Aztekode.golt-vscode" rel="noreferrer">
-                <span>VS Code Extension</span>
-                <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-external"></use>
-                </svg>
-              </a>
-              <a class="inline-flex items-center justify-center gap-2 rounded-full bg-[#3B82F6] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_60px_rgba(59,130,246,.12)] transition hover:-translate-y-0.5 hover:bg-[#1E40AF] active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                href="https://github.com/atrox39/golt" rel="noreferrer">
-                <span>View on GitHub</span>
-                <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                  <use href="#i-external"></use>
-                </svg>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="mx-auto max-w-6xl px-4 py-14">
-      <div data-reveal
-        class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#1E40AF]/20 via-[#111827]/50 to-black p-7 opacity-0 translate-y-4 transition duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none sm:p-10">
-        <div class="absolute -right-28 -top-20 h-72 w-72 rounded-full bg-[#3B82F6]/25 blur-3xl golt-drift"
-          aria-hidden="true"></div>
-        <div class="absolute -left-28 -bottom-24 h-72 w-72 rounded-full bg-[#FCD34D]/16 blur-3xl golt-drift"
-          aria-hidden="true"></div>
-
-        <div class="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
-          <div>
-            <div class="text-xs tracking-wide text-white/55">Call to action</div>
-            <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Ship scripts with volt-level clarity.
-            </h2>
-            <p class="mt-3 max-w-[70ch] text-sm leading-relaxed text-white/70">
-              If you want TypeScript ergonomics but prefer a Go-shaped runtime surface, Golt is a sharp starting point.
-            </p>
-          </div>
-          <div class="flex flex-col gap-2 sm:flex-row">
-            <a class="inline-flex items-center justify-center gap-2 rounded-full bg-[#FCD34D] px-5 py-3 text-sm font-semibold text-black transition hover:-translate-y-0.5 hover:bg-[#F59E0B] active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="#quickstart">
-              <span>Get started</span>
-              <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-arrow-right"></use>
-              </svg>
-            </a>
-            <a class="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10 active:translate-y-0 motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              href="#features">
-              <span>Explore features</span>
-              <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                <use href="#i-chevron-right"></use>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="mt-6 flex flex-wrap items-center gap-3 text-xs text-white/60">
-          <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5">
-            <span class="h-2 w-2 rounded-full bg-[#FCD34D]" aria-hidden="true"></span>
-            <span>Yellow: signal</span>
-          </span>
-          <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5">
-            <span class="h-2 w-2 rounded-full bg-[#3B82F6]" aria-hidden="true"></span>
-            <span>Blue: flow</span>
-          </span>
-          <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5">
-            <span class="h-2 w-2 rounded-full bg-[#1F2937]" aria-hidden="true"></span>
-            <span>Black: discipline</span>
-          </span>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="border-t border-white/10 bg-black/40">
-    <div class="mx-auto max-w-6xl px-4 py-10">
-      <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-        <div class="max-w-[60ch]">
-          <div class="text-sm font-semibold">Golt</div>
-          <p class="mt-2 text-sm text-white/60">
-            Lightweight TypeScript/JavaScript runtime written in Go. Bundle with esbuild, run in a Go-based engine,
-            extend with native modules.
-          </p>
-        </div>
-        <div class="flex flex-wrap gap-2 text-sm">
-          <a class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-white/85 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            href="https://github.com/atrox39/golt#readme" rel="noreferrer">
-            <svg class="h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-              <use href="#i-chevron-right"></use>
-            </svg>
-            <span>README</span>
-          </a>
-          <a class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-white/85 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            href="https://github.com/atrox39/golt" rel="noreferrer">
-            <svg class="h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-              <use href="#i-github"></use>
-            </svg>
-            <span>GitHub</span>
-          </a>
-          <a class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-white/85 transition hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FCD34D] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-            href="#top">
-            <svg class="h-4 w-4 text-white/80" viewBox="0 0 24 24" aria-hidden="true">
-              <use href="#i-up"></use>
-            </svg>
-            <span>Back to top</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </footer>
-
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-json.min.js"></script>
   <script>
-    (function () {
-      var menuBtn = document.getElementById("menuBtn");
-      var mobileMenu = document.getElementById("mobileMenu");
-      var navLinks = Array.prototype.slice.call(document.querySelectorAll(".navlink"));
+    (() => {
+      const html = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+      const savedTheme = localStorage.getItem("golt-theme");
 
-      function setMobileOpen(open) {
-        if (!menuBtn || !mobileMenu) return;
-        mobileMenu.classList.toggle("hidden", !open);
-        menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      if (savedTheme === "light") {
+        html.classList.remove("golt-theme-dark");
+        html.classList.add("golt-theme-light");
+        themeToggle.textContent = "☀";
       }
 
-      if (menuBtn && mobileMenu) {
-        setMobileOpen(false);
-        menuBtn.addEventListener("click", function () {
-          var open = mobileMenu.classList.contains("hidden");
-          setMobileOpen(open);
-          if (open) {
-            var first = mobileMenu.querySelector("a");
-            if (first) first.focus();
-          }
-        });
-      }
+      themeToggle.addEventListener("click", () => {
+        const isLight = html.classList.toggle("golt-theme-light");
+        html.classList.toggle("golt-theme-dark", !isLight);
+        localStorage.setItem("golt-theme", isLight ? "light" : "dark");
+        themeToggle.textContent = isLight ? "☀" : "☾";
+      });
 
-      navLinks.forEach(function (a) {
-        a.addEventListener("click", function () {
-          setMobileOpen(false);
+      const navToggle = document.getElementById("navToggle");
+      navToggle.addEventListener("click", () => {
+        document.body.classList.toggle("nav-open");
+      });
+
+      document.querySelectorAll(".nav-link, .toc a").forEach((link) => {
+        link.addEventListener("click", () => {
+          document.body.classList.remove("nav-open");
         });
       });
 
-      function setCopyVisual(btn, state, labelText) {
-        var label = btn.querySelector(".copy-label");
-        if (label) label.textContent = labelText;
-        var copyI = btn.querySelector(".icon-copy");
-        var okI = btn.querySelector(".icon-check");
-        var errI = btn.querySelector(".icon-x");
-        if (copyI) copyI.classList.toggle("hidden", state !== "idle");
-        if (okI) okI.classList.toggle("hidden", state !== "ok");
-        if (errI) errI.classList.toggle("hidden", state !== "err");
-      }
+      document.querySelectorAll(".copy-code").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const card = button.closest(".code-card");
+          const code = card?.querySelector("code")?.innerText ?? "";
 
-      var copyButtons = Array.prototype.slice.call(document.querySelectorAll("button.copybtn"));
-      copyButtons.forEach(function (btn) {
-        var baseLabel = btn.getAttribute("data-label") || "Copy";
-        setCopyVisual(btn, "idle", baseLabel);
-        btn.addEventListener("click", async function () {
-          var sel = btn.getAttribute("data-copy");
-          if (!sel) return;
-          var el = document.querySelector(sel);
-          if (!el) return;
-          var text = el.innerText;
           try {
-            await navigator.clipboard.writeText(text);
-            setCopyVisual(btn, "ok", "Copied");
-            setTimeout(function () { setCopyVisual(btn, "idle", baseLabel); }, 900);
-          } catch (e) {
-            setCopyVisual(btn, "err", "Copy failed");
-            setTimeout(function () { setCopyVisual(btn, "idle", baseLabel); }, 900);
+            await navigator.clipboard.writeText(code);
+            const original = button.textContent;
+            button.textContent = "Copied";
+            setTimeout(() => (button.textContent = original), 1200);
+          } catch {
+            button.textContent = "Failed";
+            setTimeout(() => (button.textContent = "Copy"), 1200);
           }
         });
       });
 
-      var reduced = false;
-      try {
-        reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      } catch (e) { }
+      const links = Array.from(document.querySelectorAll(".nav-link, .toc a"));
+      const sections = links
+        .map((link) => document.querySelector(link.getAttribute("href")))
+        .filter(Boolean);
 
-      var revealEls = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));
-      if (!reduced && "IntersectionObserver" in window) {
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.remove("opacity-0", "translate-y-4");
-            entry.target.classList.add("opacity-100", "translate-y-0");
-            io.unobserve(entry.target);
-          });
-        }, { threshold: 0.12, rootMargin: "0px 0px -10% 0px" });
-        revealEls.forEach(function (el) { io.observe(el); });
-      } else {
-        revealEls.forEach(function (el) {
-          el.classList.remove("opacity-0", "translate-y-4");
-          el.classList.add("opacity-100", "translate-y-0");
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (!visible) return;
+
+        links.forEach((link) => {
+          link.classList.toggle(
+            "active",
+            link.getAttribute("href") === `#${visible.target.id}`
+          );
         });
-      }
-
-      var params = new URLSearchParams(window.location.search);
-      var variant = params.get("ab");
-      if (variant !== "A" && variant !== "B") {
-        try {
-          variant = localStorage.getItem("golt_ab") || (Math.random() < 0.5 ? "A" : "B");
-          localStorage.setItem("golt_ab", variant);
-        } catch (e) {
-          variant = "A";
-        }
-      }
-
-      var aNodes = Array.prototype.slice.call(document.querySelectorAll("[data-ab-variant]"));
-      aNodes.forEach(function (node) {
-        var v = node.getAttribute("data-ab-variant");
-        node.classList.toggle("hidden", v !== variant);
+      }, {
+        rootMargin: "-18% 0px -68% 0px",
+        threshold: [0.1, 0.2, 0.35]
       });
 
-      var sectionIds = ["features", "how", "api", "quickstart"];
-      var sectionEls = sectionIds.map(function (id) { return document.getElementById(id); }).filter(Boolean);
-      var linkMap = {};
-      navLinks.forEach(function (a) {
-        var href = a.getAttribute("href") || "";
-        if (href.charAt(0) === "#") linkMap[href.slice(1)] = a;
-      });
+      sections.forEach((section) => observer.observe(section));
 
-      function setActive(id) {
-        navLinks.forEach(function (a) {
-          a.removeAttribute("aria-current");
-          a.classList.remove("bg-white/5", "text-white");
-        });
-        var a = linkMap[id];
-        if (a) {
-          a.setAttribute("aria-current", "page");
-          a.classList.add("bg-white/5", "text-white");
-        }
-      }
+      const search = document.getElementById("navSearch");
+      const navGroups = Array.from(document.querySelectorAll("[data-nav-group]"));
 
-      if ("IntersectionObserver" in window) {
-        var navIO = new IntersectionObserver(function (entries) {
-          var best = null;
-          entries.forEach(function (e) {
-            if (e.isIntersecting) best = e.target;
+      search.addEventListener("input", () => {
+        const q = search.value.trim().toLowerCase();
+
+        navGroups.forEach((group) => {
+          let visibleCount = 0;
+
+          group.querySelectorAll(".nav-link").forEach((link) => {
+            const matches = link.textContent.toLowerCase().includes(q);
+            link.style.display = matches ? "" : "none";
+            if (matches) visibleCount += 1;
           });
-          if (best) setActive(best.id);
-        }, { threshold: 0.2, rootMargin: "-20% 0px -70% 0px" });
-        sectionEls.forEach(function (el) { navIO.observe(el); });
-      }
+
+          group.style.display = visibleCount > 0 ? "" : "none";
+        });
+      });
     })();
   </script>
 </body>
-
 </html>

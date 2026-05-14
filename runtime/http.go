@@ -46,12 +46,7 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 			routerPattern := fmt.Sprintf("%s %s", method, exactPath)
 
 			mux.HandleFunc(routerPattern, func(w http.ResponseWriter, r *http.Request) {
-				ctx := &HttpContext{
-					w:      w,
-					r:      r,
-					done:   make(chan struct{}),
-					locals: make(map[string]any),
-				}
+				ctx := NewHttpContext(w, r)
 
 				e.loop.RunOnLoop(func(vm *goja.Runtime) {
 					ctxVal := vm.ToValue(ctx)
@@ -74,6 +69,10 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 					}
 
 					next()
+
+					if !ctx.HasResponded() {
+						ctx.AutoNoContent()
+					}
 				})
 
 				<-ctx.done
@@ -128,11 +127,7 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 
 			mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 				// Aplicamos exactamente el mismo ajuste para el handler de 404
-				ctx := &HttpContext{
-					w:    w,
-					r:    r,
-					done: make(chan struct{}),
-				}
+				ctx := NewHttpContext(w, r)
 
 				e.loop.RunOnLoop(func(vm *goja.Runtime) {
 					ctx.status = http.StatusNotFound
@@ -155,6 +150,10 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 						}
 					}
 					next()
+
+					if !ctx.HasResponded() {
+						ctx.AutoNoContent()
+					}
 				})
 				<-ctx.done
 			})
