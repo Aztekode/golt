@@ -418,6 +418,14 @@ JWT helpers using HS256.
 - `runtime/fetch.go`: global `fetch()` implementation
 - `runtime/crypto.go`: `Golt.crypto` + `Golt.jwt`
 
+## Docker
+
+Golt is available as a Docker image:
+
+```bash
+docker pull aztekode/golt:latest
+```
+
 ## Documentation Site
 
 A GitHub Pages-ready documentation site is provided at:
