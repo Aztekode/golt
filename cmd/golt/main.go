@@ -27,7 +27,7 @@ func main() {
 		Use:     "golt",
 		Short:   "Golt Runtime - TS/JS Backend Engine",
 		Long:    fmt.Sprintf("%s[Golt] Runtime%s\nA blazing fast backend engine to run TypeScript/JavaScript directly on Go.", Cyan, Reset),
-		Version: "1.0.2",
+		Version: "1.0.1",
 	}
 
 	var initCmd = &cobra.Command{
