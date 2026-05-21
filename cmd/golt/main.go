@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/atrox39/golt/runtime"
+	"github.com/Aztekode/golt/runtime"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
 )
@@ -27,7 +27,7 @@ func main() {
 		Use:     "golt",
 		Short:   "Golt Runtime - TS/JS Backend Engine",
 		Long:    fmt.Sprintf("%s[Golt] Runtime%s\nA blazing fast backend engine to run TypeScript/JavaScript directly on Go.", Cyan, Reset),
-		Version: "1.0.1",
+		Version: "1.0.2",
 	}
 
 	var initCmd = &cobra.Command{

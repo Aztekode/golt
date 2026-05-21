@@ -19,7 +19,7 @@ FROM alpine:3.21
 
 LABEL org.opencontainers.image.title="Golt Runtime"
 LABEL org.opencontainers.image.description="Go-native TypeScript/JavaScript backend runtime"
-LABEL org.opencontainers.image.source="https://github.com/atrox39/golt"
+LABEL org.opencontainers.image.source="https://github.com/Aztekode/golt"
 LABEL org.opencontainers.image.url="https://golt.dev"
 LABEL org.opencontainers.image.licenses="UNLICENSED"
 

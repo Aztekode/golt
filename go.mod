@@ -1,4 +1,4 @@
-module github.com/atrox39/golt
+module github.com/Aztekode/golt
 
 go 1.25.7
 

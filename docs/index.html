@@ -650,7 +650,7 @@
       </nav>
 
       <div class="actions">
-        <a class="btn optional" href="https://github.com/atrox39/golt" rel="noreferrer">GitHub</a>
+        <a class="btn optional" href="https://github.com/Aztekode/golt" rel="noreferrer">GitHub</a>
         <button class="btn icon-btn" id="themeToggle" type="button" aria-label="Toggle theme">☾</button>
         <a class="btn btn-primary" href="#quickstart">Get started</a>
       </div>
@@ -677,14 +677,14 @@
         <div class="mini-grid" aria-label="Highlights">
           <div class="mini"><strong>No Node runtime</strong><span>Explicit Golt APIs</span></div>
           <div class="mini"><strong>Go-native engine</strong><span>goja + event loop</span></div>
-          <div class="mini"><strong>Docker-ready</strong><span>aztekode/golt:1.0.1</span></div>
+          <div class="mini"><strong>Docker-ready</strong><span>aztekode/golt:1.0.2</span></div>
         </div>
       </div>
 
       <div class="terminal-card" aria-label="Code preview">
         <div class="terminal-head">
           <span><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>golt.dev</span>
-          <span>v1.0.1</span>
+          <span>v1.0.2</span>
         </div>
 
         <div class="tabs" role="tablist" aria-label="Code samples">
@@ -735,13 +735,13 @@ console.log(users);</code></pre></div>
 
         <div class="tab-panel" data-panel="docker">
           <button class="copy" type="button">Copy</button>
-          <div class="codeblock"><pre><code class="language-bash">docker pull aztekode/golt:1.0.1
+          <div class="codeblock"><pre><code class="language-bash">docker pull aztekode/golt:1.0.2
 
 docker run --rm \
   -p 3000:3000 \
   -v "$PWD":/workspace \
   -w /workspace \
-  aztekode/golt:1.0.1 \
+  aztekode/golt:1.0.2 \
   run app.ts</code></pre></div>
         </div>
       </div>
@@ -819,7 +819,7 @@ golt run app.ts</code></pre></div>
         <div class="cards">
           <article class="card">
             <h3>Official image</h3>
-            <p>Pull <code>aztekode/golt:latest</code> or pin a specific version like <code>aztekode/golt:1.0.1</code>.</p>
+            <p>Pull <code>aztekode/golt:latest</code> or pin a specific version like <code>aztekode/golt:1.0.2</code>.</p>
           </article>
           <article class="card">
             <h3>Local projects</h3>
@@ -841,7 +841,7 @@ golt run app.ts</code></pre></div>
   -p 3000:3000 \
   -v "$PWD":/workspace \
   -w /workspace \
-  aztekode/golt:1.0.1 \
+  aztekode/golt:1.0.2 \
   run app.ts</code></pre></div>
         </div>
 
@@ -855,7 +855,7 @@ golt run app.ts</code></pre></div>
   -p 3000:3000 `
   -v "${PWD}:/workspace" `
   -w /workspace `
-  aztekode/golt:1.0.1 `
+  aztekode/golt:1.0.2 `
   run app.ts</code></pre></div>
         </div>
 
@@ -865,7 +865,7 @@ golt run app.ts</code></pre></div>
             <span>base image</span>
           </div>
           <button class="copy" type="button">Copy</button>
-          <div class="codeblock"><pre><code class="language-dockerfile">FROM aztekode/golt:1.0.1
+          <div class="codeblock"><pre><code class="language-dockerfile">FROM aztekode/golt:1.0.2
 
 WORKDIR /app
 
@@ -879,7 +879,7 @@ CMD ["run", "app.ts"]</code></pre></div>
         <div class="callout" style="margin-top:18px">
           <span>🐳</span>
           <div>
-            <strong>Recommended production usage:</strong> pin the version with <code>aztekode/golt:1.0.1</code> instead of relying only on <code>latest</code>.
+            <strong>Recommended production usage:</strong> pin the version with <code>aztekode/golt:1.0.2</code> instead of relying only on <code>latest</code>.
           </div>
         </div>
       </div>

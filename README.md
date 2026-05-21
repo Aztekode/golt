@@ -48,7 +48,7 @@ go install .\cmd\golt
 ### Install via `go install` from GitHub
 
 ```bash
-go install github.com/atrox39/golt/cmd/golt@latest
+go install github.com/Aztekode/golt/cmd/golt@latest
 ```
 
 ## Quick Start
