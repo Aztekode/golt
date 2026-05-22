@@ -1,0 +1,64 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      VERSION: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build
+        run: go build -o golt.exe -ldflags "-X main.version=${{ env.VERSION }}" ./cmd/golt
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          iscc installer.iss
+
+      - name: Generate SHA256SUMS
+        shell: pwsh
+        run: |
+          $files = @()
+          $files += "golt.exe"
+          if (Test-Path "Output") {
+            $files += Get-ChildItem -File -Path "Output" -Filter "*.exe" | ForEach-Object { "Output/$($_.Name)" }
+          }
+          $out = @()
+          foreach ($f in $files) {
+            $hash = (Get-FileHash -Algorithm SHA256 $f).Hash.ToLower()
+            $out += "$hash  $f"
+          }
+          $out | Out-File -FilePath "SHA256SUMS" -Encoding ascii
+
+      - name: Install minisign
+        run: go install aead.dev/minisign/cmd/minisign@latest
+
+      - name: Sign SHA256SUMS
+        shell: pwsh
+        run: |
+          $keyPath = Join-Path $env:RUNNER_TEMP "minisign.key"
+          [IO.File]::WriteAllBytes($keyPath, [Convert]::FromBase64String("${{ secrets.AZTEKODE_MINISIGN_KEY_B64 }}"))
+          minisign -Sm SHA256SUMS -s $keyPath -W -t "repo=Aztekode/golt version=${{ env.VERSION }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-artifacts
+          path: |
+            golt.exe
+            Output/*.exe
+            SHA256SUMS
+            SHA256SUMS.minisig

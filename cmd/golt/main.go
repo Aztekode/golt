@@ -1,13 +1,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/Aztekode/golt/internal/appstate"
+	"github.com/Aztekode/golt/internal/updatecheck"
+	"github.com/Aztekode/golt/internal/verify"
 	"github.com/Aztekode/golt/runtime"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
@@ -23,11 +29,125 @@ const (
 )
 
 func main() {
+	var noUpdateCheck bool
+
 	var rootCmd = &cobra.Command{
 		Use:     "golt",
 		Short:   "Golt Runtime - TS/JS Backend Engine",
 		Long:    fmt.Sprintf("%s[Golt] Runtime%s\nA blazing fast backend engine to run TypeScript/JavaScript directly on Go.", Cyan, Reset),
-		Version: "1.0.2",
+		Version: version,
+	}
+
+	rootCmd.PersistentFlags().BoolVar(&noUpdateCheck, "no-update-check", false, "Disable update checks")
+
+	rootCmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
+		if version == "dev" {
+			return
+		}
+
+		st, path, err := appstate.Load()
+		if err != nil {
+			return
+		}
+
+		if st.LastSeenVersion != "" && st.LastSeenVersion != version {
+			fmt.Printf("%s[Golt] * Updated to %s (from %s)%s\n", Green, version, st.LastSeenVersion, Reset)
+		}
+
+		st.LastSeenVersion = version
+
+		now := time.Now()
+		shouldCheck := !noUpdateCheck && now.Sub(st.LastUpdateCheckAt) > 24*time.Hour
+		if shouldCheck {
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+
+			client := &http.Client{Timeout: 3 * time.Second}
+			res := updatecheck.CheckLatest(ctx, client, version, updatecheck.Options{}, func(ctx context.Context, client *http.Client, rel updatecheck.GitHubRelease) (bool, error) {
+				if officialMinisignPublicKey == "" {
+					return false, nil
+				}
+
+				var sumsURL string
+				var sigURL string
+				for _, a := range rel.Assets {
+					switch a.Name {
+					case "SHA256SUMS":
+						sumsURL = a.BrowserDownloadURL
+					case "SHA256SUMS.minisig":
+						sigURL = a.BrowserDownloadURL
+					}
+				}
+
+				if sumsURL == "" || sigURL == "" {
+					return false, fmt.Errorf("missing SHA256SUMS assets in release")
+				}
+
+				pub, err := verify.ParseMinisignPublicKey(officialMinisignPublicKey)
+				if err != nil {
+					return false, err
+				}
+
+				reqSums, err := http.NewRequestWithContext(ctx, http.MethodGet, sumsURL, nil)
+				if err != nil {
+					return false, err
+				}
+				respSums, err := client.Do(reqSums)
+				if err != nil {
+					return false, err
+				}
+				sumsBytes, err := io.ReadAll(respSums.Body)
+				respSums.Body.Close()
+				if err != nil {
+					return false, err
+				}
+				if respSums.StatusCode < 200 || respSums.StatusCode >= 300 {
+					return false, fmt.Errorf("unexpected status downloading SHA256SUMS: %s", respSums.Status)
+				}
+
+				reqSig, err := http.NewRequestWithContext(ctx, http.MethodGet, sigURL, nil)
+				if err != nil {
+					return false, err
+				}
+				respSig, err := client.Do(reqSig)
+				if err != nil {
+					return false, err
+				}
+				sigBytes, err := io.ReadAll(respSig.Body)
+				respSig.Body.Close()
+				if err != nil {
+					return false, err
+				}
+				if respSig.StatusCode < 200 || respSig.StatusCode >= 300 {
+					return false, fmt.Errorf("unexpected status downloading SHA256SUMS.minisig: %s", respSig.Status)
+				}
+
+				trustedComment, err := verify.VerifyMinisigBytes(pub, sumsBytes, sigBytes)
+				if err != nil {
+					return false, err
+				}
+
+				if rel.TagName != "" && !strings.Contains(trustedComment, rel.TagName) {
+					return false, fmt.Errorf("trusted comment does not match version")
+				}
+
+				if !strings.Contains(trustedComment, "Aztekode/golt") {
+					return false, fmt.Errorf("trusted comment does not match repository")
+				}
+
+				return true, nil
+			})
+			st.LastUpdateCheckAt = now
+
+			if res.UpdateAvailable && res.ReleaseVerified {
+				fmt.Printf("%s[Golt] * New version available: %s%s\n", Yellow, res.LatestVersion, Reset)
+				if res.URL != "" {
+					fmt.Printf("  %s\n", res.URL)
+				}
+			}
+		}
+
+		_ = appstate.Save(path, st)
 	}
 
 	var initCmd = &cobra.Command{
@@ -40,6 +160,32 @@ func main() {
 			if err := initProject(projectName); err != nil {
 				fmt.Printf("%s[Golt] [ERROR] %v%s\n", Red, err, Reset)
 				os.Exit(1)
+			}
+		},
+	}
+
+	var verifyReleaseCmd = &cobra.Command{
+		Use:   "verify-release [file]",
+		Short: "Verify that a downloaded release asset is official",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			if officialMinisignPublicKey == "" {
+				fmt.Printf("%s[Golt] [ERROR] Official minisign public key is not configured.%s\n", Red, Reset)
+				os.Exit(1)
+			}
+
+			filePath := args[0]
+			trustedComment, err := verify.VerifyAsset(filePath, verify.VerifyAssetOptions{
+				PublicKeyBase64: officialMinisignPublicKey,
+			})
+			if err != nil {
+				fmt.Printf("%s[Golt] [ERROR] Verification failed: %v%s\n", Red, err, Reset)
+				os.Exit(1)
+			}
+
+			fmt.Printf("%s[Golt] * Verified: %s%s\n", Green, filePath, Reset)
+			if trustedComment != "" {
+				fmt.Printf("  %s\n", trustedComment)
 			}
 		},
 	}
@@ -79,7 +225,7 @@ func main() {
 		},
 	}
 
-	rootCmd.AddCommand(initCmd, runCmd, watchCmd)
+	rootCmd.AddCommand(initCmd, verifyReleaseCmd, runCmd, watchCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Printf("%s[Golt] [ERROR] Unrecognized command.%s\n", Red, Reset)

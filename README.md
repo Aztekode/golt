@@ -51,6 +51,24 @@ go install .\cmd\golt
 go install github.com/Aztekode/golt/cmd/golt@latest
 ```
 
+### Windows installer
+
+The installer can optionally:
+
+- Add Golt to the PATH
+- Install an `examples/` folder
+
+To verify an official installer or binary downloaded from GitHub releases:
+
+1. Download the asset you want to verify (for example, `GoltSetup_...exe`)
+2. Download `SHA256SUMS` and `SHA256SUMS.minisig` from the same release
+3. Put the three files in the same folder
+4. Run:
+
+```bash
+golt verify-release .\GoltSetup_v1.0.3_windows_amd64.exe
+```
+
 ## Quick Start
 
 Initialize a new Golt project:
@@ -292,6 +310,14 @@ Notes:
 ### `golt watch <filename.ts>`
 
 Runs the file and automatically restarts the process when `.ts` / `.js` files change.
+
+### `golt verify-release <file>`
+
+Verifies that a downloaded release asset matches the official `SHA256SUMS` manifest and `SHA256SUMS.minisig` signature.
+
+Notes:
+
+- `SHA256SUMS` and `SHA256SUMS.minisig` must be present in the same folder as the file being verified.
 
 ## Runtime API
 
