@@ -51,6 +51,9 @@ Name: "{group}\Uninstall Golt Runtime"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\Golt Runtime"; Filename: "{app}\golt.exe"; Tasks: desktopicon
 
 [Code]
+function GetPathRootKey(): Integer;
+function GetPathSubkey(): string;
+
 function GetAppRegSubkey(): string;
 begin
   Result := 'Software\Aztekode\Golt';
