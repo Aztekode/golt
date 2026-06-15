@@ -1,3 +1,3 @@
 package main
 
-const officialMinisignPublicKey = "RWSby3gbY/jc8xyn4P6sBzZRsRrw/PnOtSrdvemYXPfYvipV6dWnw/p4"
+const officialMinisignPublicKey = "RWQz4/773G+RFM4AZVQsM8QYJ3lkPTkGNrQH7CeA3zNnoszfF//Qitj6"

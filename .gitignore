@@ -9,3 +9,4 @@ golt
 .env
 *.db
 public/
+minisign.pub
