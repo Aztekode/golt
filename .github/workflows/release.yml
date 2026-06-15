@@ -5,6 +5,9 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   windows:
     runs-on: windows-latest
@@ -58,6 +61,17 @@ jobs:
         with:
           name: windows-artifacts
           path: |
+            golt.exe
+            Output/*.exe
+            SHA256SUMS
+            SHA256SUMS.minisig
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
             golt.exe
             Output/*.exe
             SHA256SUMS
