@@ -10,3 +10,4 @@ golt
 *.db
 public/
 minisign.pub
+!examples/**/*.ts
