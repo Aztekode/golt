@@ -52,7 +52,20 @@ Name: "{commondesktop}\Golt Runtime"; Filename: "{app}\golt.exe"; Tasks: desktop
 
 [Code]
 function GetPathRootKey(): Integer;
+begin
+  if IsAdminInstallMode() then
+    Result := HKEY_LOCAL_MACHINE
+  else
+    Result := HKEY_CURRENT_USER;
+end;
+
 function GetPathSubkey(): string;
+begin
+  if IsAdminInstallMode() then
+    Result := 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
+  else
+    Result := 'Environment';
+end;
 
 function GetAppRegSubkey(): string;
 begin
@@ -100,22 +113,6 @@ begin
     AppendString(ResultParts, Part);
   end;
   Result := JoinString(ResultParts, ';');
-end;
-
-function GetPathRootKey(): Integer;
-begin
-  if IsAdminInstallMode() then
-    Result := HKEY_LOCAL_MACHINE
-  else
-    Result := HKEY_CURRENT_USER;
-end;
-
-function GetPathSubkey(): string;
-begin
-  if IsAdminInstallMode() then
-    Result := 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
-  else
-    Result := 'Environment';
 end;
 
 function ReadPathValue(): string;
