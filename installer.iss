@@ -87,32 +87,18 @@ begin
     Result := False;
 end;
 
-procedure AppendString(var Arr: TArrayOfString; Value: string);
-var
-  L: Integer;
-begin
-  L := GetArrayLength(Arr);
-  SetArrayLength(Arr, L + 1);
-  Arr[L] := Value;
-end;
-
 function NormalizePathList(Value: string): string;
-var
-  Parts: TArrayOfString;
-  ResultParts: TArrayOfString;
-  I: Integer;
-  Part: string;
 begin
-  Parts := SplitString(Value, ';');
-  SetArrayLength(ResultParts, 0);
-  for I := 0 to GetArrayLength(Parts) - 1 do
-  begin
-    Part := Trim(Parts[I]);
-    if Part = '' then
-      continue;
-    AppendString(ResultParts, Part);
-  end;
-  Result := JoinString(ResultParts, ';');
+  Result := Trim(Value);
+
+  while Pos(';;', Result) > 0 do
+    StringChangeEx(Result, ';;', ';', True);
+
+  while (Length(Result) > 0) and (Copy(Result, 1, 1) = ';') do
+    Delete(Result, 1, 1);
+
+  while (Length(Result) > 0) and (Copy(Result, Length(Result), 1) = ';') do
+    Delete(Result, Length(Result), 1);
 end;
 
 function ReadPathValue(): string;
@@ -155,26 +141,17 @@ end;
 procedure RemoveFromPath(Entry: string);
 var
   OrigPath: string;
-  Parts: TArrayOfString;
-  ResultParts: TArrayOfString;
-  I: Integer;
-  Part: string;
+  WorkPath: string;
+  Needle: string;
 begin
   OrigPath := NormalizePathList(ReadPathValue());
-  Parts := SplitString(OrigPath, ';');
-  SetArrayLength(ResultParts, 0);
+  WorkPath := ';' + OrigPath + ';';
+  Needle := ';' + Entry + ';';
 
-  for I := 0 to GetArrayLength(Parts) - 1 do
-  begin
-    Part := Trim(Parts[I]);
-    if Part = '' then
-      continue;
-    if Lowercase(Part) = Lowercase(Entry) then
-      continue;
-    AppendString(ResultParts, Part);
-  end;
+  StringChangeEx(WorkPath, Needle, ';', True);
+  WorkPath := NormalizePathList(WorkPath);
 
-  WritePathValue(JoinString(ResultParts, ';'));
+  WritePathValue(WorkPath);
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
