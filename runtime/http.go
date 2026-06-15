@@ -12,6 +12,100 @@ import (
 	"github.com/dop251/goja"
 )
 
+func writeHTTPError(ctx *HttpContext, errValue any) {
+	fmt.Println("Error HTTP: ", errValue)
+
+	if ctx.HasResponded() {
+		ctx.finish()
+		return
+	}
+
+	http.Error(ctx.w, "Internal server error", http.StatusInternalServerError)
+	ctx.finish()
+}
+
+func attachThenable(vm *goja.Runtime, value goja.Value, onFulfilled func(), onRejected func(goja.Value)) bool {
+	if value == nil || goja.IsUndefined(value) || goja.IsNull(value) {
+		return false
+	}
+
+	obj := value.ToObject(vm)
+	if obj == nil {
+		return false
+	}
+
+	thenVal := obj.Get("then")
+	thenFn, ok := goja.AssertFunction(thenVal)
+	if !ok {
+		return false
+	}
+
+	resolveFn := func(call goja.FunctionCall) goja.Value {
+		onFulfilled()
+		return goja.Undefined()
+	}
+
+	rejectFn := func(call goja.FunctionCall) goja.Value {
+		if len(call.Arguments) > 0 {
+			onRejected(call.Argument(0))
+		} else {
+			onRejected(goja.Undefined())
+		}
+
+		return goja.Undefined()
+	}
+
+	if _, err := thenFn(obj, vm.ToValue(resolveFn), vm.ToValue(rejectFn)); err != nil {
+		onRejected(vm.ToValue(err.Error()))
+	}
+
+	return true
+}
+
+func runHTTPChain(vm *goja.Runtime, ctx *HttpContext, chain []goja.Callable) {
+	ctxVal := vm.ToValue(ctx)
+
+	var execute func(index int) goja.Value
+	execute = func(index int) goja.Value {
+		if index >= len(chain) {
+			if !ctx.HasResponded() {
+				ctx.AutoNoContent()
+			}
+			return goja.Undefined()
+		}
+
+		calledNext := false
+		next := func(call goja.FunctionCall) goja.Value {
+			calledNext = true
+			return execute(index + 1)
+		}
+
+		result, err := chain[index](goja.Undefined(), ctxVal, vm.ToValue(next))
+		if err != nil {
+			writeHTTPError(ctx, err)
+			return goja.Undefined()
+		}
+
+		if attachThenable(vm, result, func() {
+			if !calledNext && !ctx.HasResponded() {
+				ctx.AutoNoContent()
+			}
+		}, func(reason goja.Value) {
+			writeHTTPError(ctx, reason)
+		}) {
+			return result
+		}
+
+		if !calledNext && !ctx.HasResponded() {
+			ctx.AutoNoContent()
+		}
+
+		return result
+	}
+
+	execute(0)
+}
+
 func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 	goltObj := vm.Get("Golt").ToObject(vm)
 
@@ -49,30 +143,9 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 				ctx := NewHttpContext(w, r)
 
 				e.loop.RunOnLoop(func(vm *goja.Runtime) {
-					ctxVal := vm.ToValue(ctx)
-
 					chain := append([]goja.Callable{}, middlewares...)
 					chain = append(chain, handler)
-					index := -1
-
-					var next func()
-					next = func() {
-						index++
-						if index < len(chain) {
-							_, err := chain[index](goja.Undefined(), ctxVal, vm.ToValue(next))
-							if err != nil {
-								fmt.Println("Error HTTP: ", err)
-								http.Error(w, "Internal server error", http.StatusInternalServerError)
-								ctx.finish()
-							}
-						}
-					}
-
-					next()
-
-					if !ctx.HasResponded() {
-						ctx.AutoNoContent()
-					}
+					runHTTPChain(vm, ctx, chain)
 				})
 
 				<-ctx.done
@@ -131,29 +204,9 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 
 				e.loop.RunOnLoop(func(vm *goja.Runtime) {
 					ctx.status = http.StatusNotFound
-					ctxVal := vm.ToValue(ctx)
-
 					chain := append([]goja.Callable{}, middlewares...)
 					chain = append(chain, handler)
-					index := -1
-
-					var next func()
-					next = func() {
-						index++
-						if index < len(chain) {
-							_, err := chain[index](goja.Undefined(), ctxVal, vm.ToValue(next))
-							if err != nil {
-								fmt.Println("Error HTTP: ", err)
-								http.Error(w, "Internal server error", http.StatusInternalServerError)
-								ctx.finish()
-							}
-						}
-					}
-					next()
-
-					if !ctx.HasResponded() {
-						ctx.AutoNoContent()
-					}
+					runHTTPChain(vm, ctx, chain)
 				})
 				<-ctx.done
 			})
