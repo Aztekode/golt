@@ -9,6 +9,31 @@ Golt is intentionally small: instead of trying to clone Node.js, it exposes a fo
 - CLI: `golt init <project-name>`, `golt run <file.ts>`, `golt watch <file.ts>`
 - Runtime globals: `console.log`, `Golt.env`, `Golt.logger`, `Golt.App`, `Golt.db`, `Golt.fs`, `Golt.crypto`, `Golt.jwt`, and global `fetch()`
 - Editor support: [Golt VS Code Extension](https://marketplace.visualstudio.com/items?itemName=Aztekode.golt-vscode)
+- Engine selection: `--engine=goja` (default) and reserved `--engine=v8go` experimental path
+
+## Project Status
+
+Golt is currently in an early but actively evolving stage.
+
+- Stable line: `v1.0.3`
+- Current engine: `goja`
+- Current focus: governance/open source foundation, engine abstraction, and package/module support
+- Engine abstraction status: `JSEngine` + `GojaEngine` wrapper are in place; `v8go` remains pending as a viability spike
+- Current engine decision: keep `goja` as production default; `v8go` is not approved yet for Windows production builds
+
+Public planning documents:
+
+- [ROADMAP.md](file:///c:/Users/cortega/Development/personal/golt-project/golt/ROADMAP.md)
+- [PLAN.md](file:///c:/Users/cortega/Development/personal/golt-project/golt/PLAN.md)
+- [CHANGELOG.md](file:///c:/Users/cortega/Development/personal/golt-project/golt/CHANGELOG.md)
+- [ADR-001](file:///c:/Users/cortega/Development/personal/golt-project/golt/docs/adr/ADR-001-engine-selection.md)
+
+Project policies:
+
+- [LICENSE](file:///c:/Users/cortega/Development/personal/golt-project/golt/LICENSE)
+- [CONTRIBUTING.md](file:///c:/Users/cortega/Development/personal/golt-project/golt/CONTRIBUTING.md)
+- [CODE_OF_CONDUCT.md](file:///c:/Users/cortega/Development/personal/golt-project/golt/CODE_OF_CONDUCT.md)
+- [SECURITY.md](file:///c:/Users/cortega/Development/personal/golt-project/golt/SECURITY.md)
 
 ## Project Overview
 
@@ -24,6 +49,14 @@ This repo contains:
 - A CLI in `cmd/golt`
 - The runtime engine and native modules in `runtime`
 - A GitHub Pages documentation site in `docs`
+
+## Contributing
+
+If you want to contribute:
+
+1. Read [CONTRIBUTING.md](file:///c:/Users/cortega/Development/personal/golt-project/golt/CONTRIBUTING.md)
+2. Check the public priorities in [ROADMAP.md](file:///c:/Users/cortega/Development/personal/golt-project/golt/ROADMAP.md)
+3. Open an issue before starting large architectural work
 
 ## Requirements
 
@@ -214,6 +247,19 @@ app.notFound((ctx) => {
 });
 
 app.serve(3000);
+```
+
+#### Async handlers
+
+Route handlers can be `async` and await runtime promises such as `db.query()`:
+
+```ts
+type User = { id: number; name: string };
+
+app.get("/users", async (ctx) => {
+  const users = await db.query<User>("SELECT id, name FROM users");
+  ctx.Json({ users });
+});
 ```
 
 If a route handler or middleware chain finishes without sending a response, Golt finalizes the request automatically with `204 No Content` instead of leaving the HTTP request hanging.

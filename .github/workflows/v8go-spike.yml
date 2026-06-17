@@ -1,0 +1,102 @@
+name: v8go-spike
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/v8go-spike.yml"
+      - "spikes/v8go-smoke/**"
+      - "docs/adr/ADR-001-engine-selection.md"
+      - "PLAN.md"
+  pull_request:
+    paths:
+      - ".github/workflows/v8go-spike.yml"
+      - "spikes/v8go-smoke/**"
+      - "docs/adr/ADR-001-engine-selection.md"
+      - "PLAN.md"
+
+jobs:
+  smoke-supported:
+    name: smoke-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    defaults:
+      run:
+        working-directory: spikes/v8go-smoke
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: spikes/v8go-smoke/go.mod
+
+      - name: Resolve module
+        run: go mod tidy
+
+      - name: Run smoke test
+        run: go run .
+
+      - name: Run event loop spike
+        run: go test ./eventloop -v
+
+      - name: Run cold start benchmarks
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          go test ./bench -run TestDoesNotExist -bench . -benchmem -cpu 1 -count 10 | tee artifacts/cold-start-${{ matrix.os }}.txt
+
+      - name: Upload supported-platform artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v8go-smoke-${{ matrix.os }}-artifacts
+          path: |
+            spikes/v8go-smoke/artifacts/cold-start-${{ matrix.os }}.txt
+
+  smoke-windows:
+    name: smoke-windows-latest
+    runs-on: windows-latest
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: spikes/v8go-smoke
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: spikes/v8go-smoke/go.mod
+
+      - name: Resolve module
+        shell: pwsh
+        run: go mod tidy
+
+      - name: Build smoke test
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          go build -x . 2>&1 | Tee-Object -FilePath build.log
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+      - name: Run goja baseline benchmark
+        shell: pwsh
+        run: |
+          go test ./bench -run TestDoesNotExist -bench BenchmarkColdStartGoja -benchmem -cpu 1 -count 10 2>&1 | Tee-Object -FilePath artifacts/cold-start-windows-latest.txt
+
+      - name: Upload Windows artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v8go-smoke-windows-artifacts
+          path: |
+            spikes/v8go-smoke/build.log
+            spikes/v8go-smoke/artifacts/cold-start-windows-latest.txt

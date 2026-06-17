@@ -52,7 +52,7 @@ func InitFetch(vm *goja.Runtime, e *GoltEngine) {
 		go func() {
 			req, err := http.NewRequest(method, url, bytes.NewBuffer(bodyBytes))
 			if err != nil {
-				e.loop.RunOnLoop(func(*goja.Runtime) { reject(err.Error()) })
+				e.RunOnLoop(func(*goja.Runtime) { reject(err.Error()) })
 				return
 			}
 
@@ -66,18 +66,18 @@ func InitFetch(vm *goja.Runtime, e *GoltEngine) {
 
 			resp, err := client.Do(req)
 			if err != nil {
-				e.loop.RunOnLoop(func(*goja.Runtime) { reject(err.Error()) })
+				e.RunOnLoop(func(*goja.Runtime) { reject(err.Error()) })
 				return
 			}
 			defer resp.Body.Close()
 
 			respBody, err := io.ReadAll(resp.Body)
 			if err != nil {
-				e.loop.RunOnLoop(func(*goja.Runtime) { reject(err.Error()) })
+				e.RunOnLoop(func(*goja.Runtime) { reject(err.Error()) })
 				return
 			}
 
-			e.loop.RunOnLoop(func(*goja.Runtime) {
+			e.RunOnLoop(func(*goja.Runtime) {
 				respObj := vm.NewObject()
 				respObj.Set("ok", resp.StatusCode >= 200 && resp.StatusCode < 300)
 				respObj.Set("status", resp.StatusCode)

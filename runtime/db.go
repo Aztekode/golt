@@ -37,7 +37,7 @@ func InitDB(vm *goja.Runtime, e *GoltEngine) {
 			go func() {
 				rows, err := db.Query(querySQL, params...)
 				if err != nil {
-					e.loop.RunOnLoop(func(r *goja.Runtime) {
+					e.RunOnLoop(func(r *goja.Runtime) {
 						reject(vm.ToValue(err.Error()))
 					})
 					return
@@ -46,7 +46,7 @@ func InitDB(vm *goja.Runtime, e *GoltEngine) {
 
 				columns, err := rows.Columns()
 				if err != nil {
-					e.loop.RunOnLoop(func(r *goja.Runtime) {
+					e.RunOnLoop(func(r *goja.Runtime) {
 						reject(vm.ToValue(err.Error()))
 					})
 					return
@@ -64,7 +64,7 @@ func InitDB(vm *goja.Runtime, e *GoltEngine) {
 					}
 
 					if err := rows.Scan(valuePtrs...); err != nil {
-						e.loop.RunOnLoop(func(r *goja.Runtime) {
+						e.RunOnLoop(func(r *goja.Runtime) {
 							reject(vm.ToValue(err.Error()))
 						})
 						return
@@ -86,13 +86,13 @@ func InitDB(vm *goja.Runtime, e *GoltEngine) {
 				}
 
 				if err := rows.Err(); err != nil {
-					e.loop.RunOnLoop(func(r *goja.Runtime) {
+					e.RunOnLoop(func(r *goja.Runtime) {
 						reject(vm.ToValue(err.Error()))
 					})
 					return
 				}
 
-				e.loop.RunOnLoop(func(r *goja.Runtime) {
+				e.RunOnLoop(func(r *goja.Runtime) {
 					resolve(results)
 				})
 			}()
@@ -120,7 +120,7 @@ func InitDB(vm *goja.Runtime, e *GoltEngine) {
 			go func() {
 				result, err := db.Exec(execSQL, params...)
 				if err != nil {
-					e.loop.RunOnLoop(func(r *goja.Runtime) {
+					e.RunOnLoop(func(r *goja.Runtime) {
 						reject(vm.ToValue(err.Error()))
 					})
 					return
@@ -142,7 +142,7 @@ func InitDB(vm *goja.Runtime, e *GoltEngine) {
 					response["lastInsertId"] = lastInsertID
 				}
 
-				e.loop.RunOnLoop(func(r *goja.Runtime) {
+				e.RunOnLoop(func(r *goja.Runtime) {
 					resolve(response)
 				})
 			}()

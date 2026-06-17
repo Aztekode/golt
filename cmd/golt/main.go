@@ -30,6 +30,7 @@ const (
 
 func main() {
 	var noUpdateCheck bool
+	var engineName string
 
 	var rootCmd = &cobra.Command{
 		Use:     "golt",
@@ -39,6 +40,7 @@ func main() {
 	}
 
 	rootCmd.PersistentFlags().BoolVar(&noUpdateCheck, "no-update-check", false, "Disable update checks")
+	rootCmd.PersistentFlags().StringVar(&engineName, "engine", string(runtime.EngineGoja), "JavaScript engine to use: goja (default) or experimental v8go")
 
 	rootCmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
 		if version == "dev" {
@@ -196,17 +198,13 @@ func main() {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			filename := args[0]
-			fmt.Printf("%s[Golt] * Starting %s...%s\n", Cyan, filename, Reset)
+			engine, err := newConfiguredEngine(engineName)
+			if err != nil {
+				fmt.Printf("%s[Golt] [ERROR] %v%s\n", Red, err, Reset)
+				os.Exit(1)
+			}
 
-			engine := runtime.NewEngine()
-			engine.Register(runtime.InitConsole)
-			engine.Register(runtime.InitEnv)
-			engine.Register(runtime.InitLogger)
-			engine.Register(runtime.InitHttp)
-			engine.Register(runtime.InitDB)
-			engine.Register(runtime.InitFs)
-			engine.Register(runtime.InitFetch)
-			engine.Register(runtime.InitCrypto)
+			fmt.Printf("%s[Golt] * Starting %s with %s...%s\n", Cyan, filename, engine.Kind(), Reset)
 
 			if err := engine.RunFile(filename); err != nil {
 				fmt.Printf("%s[Golt] [ERROR] Execution error: %v%s\n", Red, err, Reset)
@@ -221,7 +219,7 @@ func main() {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			filename := args[0]
-			watchApp(filename)
+			watchApp(filename, engineName, noUpdateCheck)
 		},
 	}
 
@@ -231,6 +229,24 @@ func main() {
 		fmt.Printf("%s[Golt] [ERROR] Unrecognized command.%s\n", Red, Reset)
 		os.Exit(1)
 	}
+}
+
+func newConfiguredEngine(engineName string) (runtime.JSEngine, error) {
+	engine, err := runtime.NewEngine(runtime.EngineKind(strings.ToLower(strings.TrimSpace(engineName))))
+	if err != nil {
+		return nil, err
+	}
+
+	engine.Register(runtime.InitConsole)
+	engine.Register(runtime.InitEnv)
+	engine.Register(runtime.InitLogger)
+	engine.Register(runtime.InitHttp)
+	engine.Register(runtime.InitDB)
+	engine.Register(runtime.InitFs)
+	engine.Register(runtime.InitFetch)
+	engine.Register(runtime.InitCrypto)
+
+	return engine, nil
 }
 
 func initProject(projectName string) error {
@@ -313,7 +329,7 @@ app.serve(3000);
 	return nil
 }
 
-func watchApp(filePath string) {
+func watchApp(filePath string, engineName string, noUpdateCheck bool) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		fmt.Printf("%s[Golt] [ERROR] Error starting watcher: %v%s\n", Red, err, Reset)
@@ -336,7 +352,13 @@ func watchApp(filePath string) {
 			cmd.Wait()
 		}
 
-		cmd = exec.Command(os.Args[0], "run", filePath)
+		args := []string{"run", "--engine", engineName}
+		if noUpdateCheck {
+			args = append(args, "--no-update-check")
+		}
+		args = append(args, filePath)
+
+		cmd = exec.Command(os.Args[0], args...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 

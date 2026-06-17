@@ -142,7 +142,7 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 			mux.HandleFunc(routerPattern, func(w http.ResponseWriter, r *http.Request) {
 				ctx := NewHttpContext(w, r)
 
-				e.loop.RunOnLoop(func(vm *goja.Runtime) {
+				e.RunOnLoop(func(vm *goja.Runtime) {
 					chain := append([]goja.Callable{}, middlewares...)
 					chain = append(chain, handler)
 					runHTTPChain(vm, ctx, chain)
@@ -202,7 +202,7 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 				// Aplicamos exactamente el mismo ajuste para el handler de 404
 				ctx := NewHttpContext(w, r)
 
-				e.loop.RunOnLoop(func(vm *goja.Runtime) {
+				e.RunOnLoop(func(vm *goja.Runtime) {
 					ctx.status = http.StatusNotFound
 					chain := append([]goja.Callable{}, middlewares...)
 					chain = append(chain, handler)
@@ -215,7 +215,7 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 
 		appObj.Set("serve", func(call goja.FunctionCall) goja.Value {
 			port := call.Argument(0).ToInteger()
-			e.Wg.Add(1)
+			e.AddBackgroundTask()
 
 			srv := &http.Server{
 				Addr:    fmt.Sprintf(":%d", port),
@@ -243,8 +243,8 @@ func InitHttp(vm *goja.Runtime, e *GoltEngine) {
 				}
 
 				fmt.Println("Server is down")
-				e.loop.Stop()
-				e.Wg.Done()
+				e.StopEventLoop()
+				e.DoneBackgroundTask()
 			}()
 
 			return goja.Undefined()

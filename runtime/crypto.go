@@ -26,7 +26,7 @@ func InitCrypto(vm *goja.Runtime, e *GoltEngine) {
 
 		go func() {
 			hash, err := bcrypt.GenerateFromPassword([]byte(password), cost)
-			e.loop.RunOnLoop(func(*goja.Runtime) {
+			e.RunOnLoop(func(*goja.Runtime) {
 				if err != nil {
 					reject(err.Error())
 				} else {
@@ -46,7 +46,7 @@ func InitCrypto(vm *goja.Runtime, e *GoltEngine) {
 
 		go func() {
 			err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-			e.loop.RunOnLoop(func(*goja.Runtime) {
+			e.RunOnLoop(func(*goja.Runtime) {
 				if err != nil {
 					if err == bcrypt.ErrMismatchedHashAndPassword {
 						resolve(false)
